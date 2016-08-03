@@ -1,0 +1,17 @@
+<!-- #1. iframe version -->
+<!-- <iframe id="ytplayer" type="text/html" width="720" height="405" src="{{ options.src }}" frameborder="0" allowfullscreen> -->
+
+<!-- #2. Flash Version -->
+<object width="640" height="390">
+  <param name="movie"
+         value="{{ options.src }}"></param>
+  <param name="allowScriptAccess" value="always"></param>
+  <embed src="{{ options.src }}"
+         type="application/x-shockwave-flash"
+         allowscriptaccess="always"
+         width="640" height="390"></embed>
+</object>
+
+
+<!-- BOB YouTube Channel -->
+<!-- https://www.youtube.com/channel/UC8GdUpRohKVOEP0opZ99lBA?guided_help_flow=3 -->

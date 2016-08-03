@@ -1,0 +1,14 @@
+<?php
+
+function dtuber_uninstall(){
+	drupal_set_message('DTuber uninstalled Successfully. Have a good day!');
+}
+
+function dtuber_theme(){
+	return array(
+		'dtuber_field_formatter' => array(
+			'variables' => array('options' => null),
+			'template' => 'dtuber-field-formatter',
+		),
+	);
+}

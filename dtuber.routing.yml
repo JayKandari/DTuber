@@ -1,0 +1,7 @@
+dtuber.configform:
+  path: '/admin/config/media/dtuber_config'
+  defaults:
+    _form: '\Drupal\dtuber\Form\DtuberConfigForm'
+    _title: 'Configure DTuber'
+  requirements:
+    _permission: 'administer site configuration'
