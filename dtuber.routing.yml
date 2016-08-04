@@ -5,3 +5,10 @@ dtuber.configform:
     _title: 'Configure DTuber'
   requirements:
     _permission: 'administer site configuration'
+dtuber.youtube:
+  path: '/youtube-test'
+  defaults:
+    _controller: '\Drupal\dtuber\Controller\DTuberController::content'
+    _title: 'Testing Youtube service'
+  requirements:
+    _permission: 'access content'
