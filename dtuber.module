@@ -10,5 +10,9 @@ function dtuber_theme(){
 			'variables' => array('options' => null),
 			'template' => 'dtuber-field-formatter',
 		),
+		'dtuber_youtube_service_example' => array(
+			'variables' => array('options' => null),
+			'template' => 'dtuber-youtube-service-example',
+		),
 	);
 }

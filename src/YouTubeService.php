@@ -10,21 +10,145 @@ use \Google;
 use \Google\Service\YouTube;
 
 class YouTubeService {
-	protected $youtube;
+	protected $client_id;
+	protected $client_secret;
+	protected $redirect_uri;
+	protected $client;
 
 	public function __construct() {
+		
+		$this->client_id = $this->getConfig('client_id');
+		$this->client_secret = $this->getConfig('client_secret');
+		$this->redirect_uri = $this->getConfig('redirect_uri');
 
-		$DEVELOPER_KEY = 'AIzaSyAEW1d3ZoWYYMktMjslLR_aa1fNwH7eZ6I';
+		// set client;
+		$this->client = new \Google_Client();
 
-		$client = new \Google_Client();
-		$client->setDeveloperKey($DEVELOPER_KEY);
-		// printData($client);
+		// initialize client
+		$this->initializeClient();
 
-		$this->youtube = new \Google_Service_YouTube($client);
+		# set access token
+		$this->access_token();
 	}
 
-	public function getDemoValue() {
-		$result = $this->youtube->search->listSearch('id,snippet', array('q'=>'Jugaad', 'maxResults'=>10));
-		return $result;
+	protected function access_token(){
+		// $this->client->authenticate(get('code'));
+		$this->client->setAccessToken(json_encode($this->getConfig('access_token')));
+	}
+
+	protected function getConfig($config){
+		// return config from dtuber config settings.
+		return \Drupal::config('dtuber.settings')->get($config);
+	}
+
+	protected function initializeClient(){
+		$this->client->setClientId($this->client_id);
+		$this->client->setClientSecret($this->client_secret);
+		$this->client->setScopes('https://www.googleapis.com/auth/youtube');
+		$this->client->setRedirectUri($this->redirect_uri);
+	}
+
+	public function revokeAuth(){
+		/**
+		 * Revoke an OAuth2 access token or refresh token. This method will revoke the current access
+		 * token, if a token isn't provided.
+		 * @param string|null $token The token (access token or a refresh token) that should be revoked.
+		 * @return boolean Returns True if the revocation was successful, otherwise False.
+		 */
+		return $this->client->revokeToken();
+	}
+
+	public function getAuthUrl(){
+		return $this->client->createAuthUrl();
+	}
+
+	public function authorizeClient($code) {
+		$this->client->authenticate($code);
+
+		return $this->client->getAccessToken();
+	}
+
+	/**
+	 * Uploads video to YouTube.
+	 */
+	public function uploadVideo(){
+		kint($this->client);
+		try{
+			$html = '<p><strong>Client Authorized: </strong></p>';
+			$youtube = new \Google_Service_YouTube($this->client);
+			
+			$videoPath = "./videos.mp4";
+
+		    // video category.
+		    $snippet = new \Google_Service_YouTube_VideoSnippet();
+		    $cur_time = date('h:i a, M-d-Y', time());
+		    $snippet->setTitle("Test title - ". $cur_time);
+		    $snippet->setDescription("Test description lorem ipsum... ". $cur_time);
+		    $snippet->setTags(array("tag1", "tag2"));
+
+		    // Numeric video category. See
+		    // https://developers.google.com/youtube/v3/docs/videoCategories/list
+		    $snippet->setCategoryId("22");
+
+		    // Set the video's status to "public". Valid statuses are "public",
+		    // "private" and "unlisted".
+		    $status = new \Google_Service_YouTube_VideoStatus();
+		    $status->privacyStatus = "public";
+
+		    // Associate the snippet and status objects with a new video resource.
+		    $video = new \Google_Service_YouTube_Video();
+		    $video->setSnippet($snippet);
+		    $video->setStatus($status);
+
+		    // Specify the size of each chunk of data, in bytes. Set a higher value for
+		    // reliable connection as fewer chunks lead to faster uploads. Set a lower
+		    // value for better recovery on less reliable connections.
+		    $chunkSizeBytes = 1 * 1024 * 1024;
+
+		    // Setting the defer flag to true tells the client to return a request which can be called
+		    // with ->execute(); instead of making the API call immediately.
+		    $this->client->setDefer(true);
+
+		    // Create a request for the API's videos.insert method to create and upload the video.
+		    $insertRequest = $youtube->videos->insert("status,snippet", $video);
+
+		    // Create a MediaFileUpload object for resumable uploads.
+		    $media = new \Google_Http_MediaFileUpload(
+		        $this->client,
+		        $insertRequest,
+		        'video/*',
+		        null,
+		        true,
+		        $chunkSizeBytes
+		    );
+		    $media->setFileSize(filesize($videoPath));
+
+
+		    // Read the media file and upload it chunk by chunk.
+		    $status = false;
+		    $handle = fopen($videoPath, "rb");
+		    while (!$status && !feof($handle)) {
+		      $chunk = fread($handle, $chunkSizeBytes);
+		      $status = $media->nextChunk($chunk);
+		    }
+
+		    fclose($handle);
+
+		    // If you want to make other calls after the file upload, set setDefer back to false
+		    $this->client->setDefer(false);
+
+
+		    $html .= "<h3>Video Uploaded</h3><ul>";
+		    $html .= sprintf('<li>%s (%s)</li>',
+		        $status['snippet']['title'],
+		        $status['id']);
+
+		    $html .= '</ul>';
+		}catch(\Exception $e) {
+			drupal_set_message('\Drupal\dtuber\YouTube : ' . $e->getMessage(), 'error');
+		}
+
+		# returns 
+		return $html;
 	}
 }

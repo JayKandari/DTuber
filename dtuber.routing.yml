@@ -12,3 +12,15 @@ dtuber.youtube:
     _title: 'Testing Youtube service'
   requirements:
     _permission: 'access content'
+dtuber.revokeauth:
+  path: '/dtuber/revoke'
+  defaults:
+    _controller: '\Drupal\dtuber\Controller\DTuberController::revoke'
+  requirements:
+    _permission: 'administer site configuration'
+dtuber.authorize:
+  path: '/dtuber/authorize'
+  defaults:
+    _controller: '\Drupal\dtuber\Controller\DTuberController::authorize'
+  requirements:
+    _permission: 'administer site configuration'
