@@ -8,7 +8,7 @@ namespace Drupal\dtuber\Form;
 
 use \Drupal\Core\Form\ConfigFormBase;
 use \Drupal\Core\Form\FormStateInterface;
-
+// use \Drupal\Core\Entity;
 
 class DtuberConfigForm extends ConfigFormBase {
 	/**
@@ -32,8 +32,8 @@ class DtuberConfigForm extends ConfigFormBase {
 		global $base_url;
 		// get config
 		$config = $this->config('dtuber.settings');
-
-		if($config->get('access_token')){
+		$hasAccessToken = $config->get('access_token');
+		if($hasAccessToken){
 			$revoke = '<p><a href="'.$base_url. '/dtuber/revoke">Revoke Current Authentication</a></p>';
 			$form['dtuber_access_token'] = array(
 				'#type' => 'markup',
@@ -54,6 +54,7 @@ class DtuberConfigForm extends ConfigFormBase {
 			'#title' => 'Client ID',
 			'#default_value' => $config->get('client_id'),
 			'#description' => $this->t('Set Client Id'),
+			'#disabled' => $hasAccessToken,
 		);
 
 		$form['dtuber_client_secret'] = array(
@@ -61,6 +62,7 @@ class DtuberConfigForm extends ConfigFormBase {
 			'#title' => 'Client Secret',
 			'#default_value' => $config->get('client_secret'),
 			'#description' => $this->t('Set Client Secret'),
+			'#disabled' => $hasAccessToken,
 		);
 
 		$redirect_uri = $base_url . '/dtuber/authorize';
@@ -69,8 +71,19 @@ class DtuberConfigForm extends ConfigFormBase {
 			'#title' => 'Redirect uri',
 			'#default_value' => ($config->get('redirect_uri'))? $config->get('redirect_uri') : $redirect_uri,
 			'#description' => $this->t("Redirect uri should be set to '%redirect_uri'", array('%redirect_uri'=>$redirect_uri)),
+			'#disabled' => $hasAccessToken,
 		);
 
+		// $form['test_file'] = array(
+		// 	'#type' => 'managed_file',
+		// 	'#title' => 'Upload Something',
+		// 	'#upload_location' => 'public://dtuber_files/'
+		// );
+		// if(isset($_SESSION['file'])){
+		// 	$file = $_SESSION['file'];
+		// 	kint($file);
+		// 	drupal_set_message($file->getFileUri());
+		// }
 
 		return parent::buildForm($form, $form_state);
 	}
@@ -88,6 +101,11 @@ class DtuberConfigForm extends ConfigFormBase {
 		$config->set('redirect_uri', $form_state->getValue('dtuber_redirect_uri'))->save();
 
 		drupal_set_message('Configuration saved !!');
+
+		$fid = $form_state->getValue('test_file')[0];
+		// $file = \Drupal\Core\Entity\File::load($fid);
+		$_SESSION['file'] = file_load($fid);
+		// kint($file);
 
 		parent::submitForm($form, $form_state);
 	}

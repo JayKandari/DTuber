@@ -3,5 +3,9 @@ services:
     class: Drupal\dtuber\EventSubscriber\RemoveXFrameOptionsSubscriber
     tags:
       - { name: event_subscriber }
+  dtuber_subscribers:
+    class: Drupal\dtuber\EventSubscriber\DtuberSubscribers
+    tags:
+      - { name: event_subscriber }
   dtuber_youtube_service:
     class: Drupal\dtuber\YouTubeService

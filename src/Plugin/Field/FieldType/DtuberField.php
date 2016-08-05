@@ -9,6 +9,7 @@ namespace Drupal\dtuber\Plugin\Field\FieldType;
 use \Drupal\Core\Field\FieldItemBase;
 use \Drupal\Core\TypedData\DataDefinition;
 use \Drupal\Core\Field\FieldStorageDefinitionInterface;
+use \Drupal\Core\Field\FieldItemInterface;
 
 /**
  * Plugin implementation of 'Dtuber Field' field type
@@ -74,5 +75,13 @@ class DtuberField extends FieldItemBase {
 		));
 
 		return $constraints;
+	}
+
+	/**
+	 * {@inheritdocs}
+	 */
+	public function postSave($data){
+		$_SESSION['message'] = $data;
+		drupal_set_message("DtuberField->postSave() Fired. ");
 	}
 }
