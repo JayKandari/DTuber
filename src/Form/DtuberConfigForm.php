@@ -29,11 +29,11 @@ class DtuberConfigForm extends ConfigFormBase {
 	 * {@inheritdoc}
 	 */
 	public function buildForm(array $form, FormStateInterface $form_state) {
+		global $base_url;
 		// get config
 		$config = $this->config('dtuber.settings');
 
 		if($config->get('access_token')){
-			global $base_url;
 			$revoke = '<p><a href="'.$base_url. '/dtuber/revoke">Revoke Current Authentication</a></p>';
 			$form['dtuber_access_token'] = array(
 				'#type' => 'markup',
@@ -41,7 +41,7 @@ class DtuberConfigForm extends ConfigFormBase {
 				'#markup' => '<strong>Access Token : </strong>'. json_encode($config->get('access_token')) . $revoke,
 			);
 		}else{
-			$myservice = \Drupal::service('youtube_service');
+			$myservice = \Drupal::service('dtuber_youtube_service');
 			$auth_url = $myservice->getAuthUrl();
 			$form['authorize'] = array(
 				'#type' => 'markup',
@@ -53,26 +53,24 @@ class DtuberConfigForm extends ConfigFormBase {
 			'#type' => 'textfield',
 			'#title' => 'Client ID',
 			'#default_value' => $config->get('client_id'),
+			'#description' => $this->t('Set Client Id'),
 		);
 
 		$form['dtuber_client_secret'] = array(
 			'#type' => 'textfield',
 			'#title' => 'Client Secret',
 			'#default_value' => $config->get('client_secret'),
+			'#description' => $this->t('Set Client Secret'),
 		);
 
+		$redirect_uri = $base_url . '/dtuber/authorize';
 		$form['dtuber_redirect_uri'] = array(
 			'#type' => 'textfield',
 			'#title' => 'Redirect uri',
-			'#default_value' => $config->get('redirect_uri'),
+			'#default_value' => ($config->get('redirect_uri'))? $config->get('redirect_uri') : $redirect_uri,
+			'#description' => $this->t("Redirect uri should be set to '%redirect_uri'", array('%redirect_uri'=>$redirect_uri)),
 		);
 
-
-		$form['dtuber_example'] = array(
-			'#type' => 'textfield',
-			'#title' => 'Example Field',
-			'#default_value' => $config->get('example'),
-		);
 
 		return parent::buildForm($form, $form_state);
 	}
@@ -88,8 +86,6 @@ class DtuberConfigForm extends ConfigFormBase {
 		$config->set('client_secret', $form_state->getValue('dtuber_client_secret'))->save();
 
 		$config->set('redirect_uri', $form_state->getValue('dtuber_redirect_uri'))->save();
-
-		$config->set('example', $form_state->getValue('dtuber_example'))->save();
 
 		drupal_set_message('Configuration saved !!');
 

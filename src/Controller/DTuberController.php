@@ -15,7 +15,7 @@ class DTuberController extends ControllerBase {
 	 */
 	public function content(){
 
-		// $service = \Drupal::service('youtube_service');
+		// $service = \Drupal::service('dtuber_youtube_service');
 		// $results = $service->getDemoValue();
 		// $result = $results->getItems();
 		// kint($result);
@@ -160,7 +160,7 @@ class DTuberController extends ControllerBase {
 		// 	'auth_url' => $auth_url,
 		// );
 
-		$myservice = \Drupal::service('youtube_service');
+		$myservice = \Drupal::service('dtuber_youtube_service');
 
 		$html = $myservice->uploadVideo();
 		
@@ -175,7 +175,7 @@ class DTuberController extends ControllerBase {
 		$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
 		$config->set('access_token', null)->save();
 
-		$myservice = \Drupal::service('youtube_service');
+		$myservice = \Drupal::service('dtuber_youtube_service');
 		$myservice->revokeAuth();
 
 		drupal_set_message('Authentication Revoked. Need re authorization from Google.');
@@ -189,7 +189,7 @@ class DTuberController extends ControllerBase {
 		$code = \Drupal::request()->query->get('code');
 		$error = \Drupal::request()->query->get('error');
 		if($code){
-			$myservice = \Drupal::service('youtube_service');
+			$myservice = \Drupal::service('dtuber_youtube_service');
 			$access_token = $myservice->authorizeClient($code);
 			// store token into database.
 			$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
