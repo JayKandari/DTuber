@@ -24,3 +24,10 @@ dtuber.authorize:
     _controller: '\Drupal\dtuber\Controller\DTuberController::authorize'
   requirements:
     _permission: 'administer site configuration'
+dtuber.testform:
+  path: '/dtuber/testform'
+  defaults:
+    _form: '\Drupal\dtuber\Form\TestUploadForm'
+    _title: 'Test Upload Form'
+  requirements:
+    _permission: 'access content'
