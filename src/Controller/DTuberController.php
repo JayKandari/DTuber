@@ -190,11 +190,8 @@ class DTuberController extends ControllerBase {
 		$error = \Drupal::request()->query->get('error');
 		if($code){
 			$myservice = \Drupal::service('dtuber_youtube_service');
-			$access_token = $myservice->authorizeClient($code);
-			// store token into database.
-			$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
-			$config->set('access_token', $access_token)->save();
-			drupal_set_message('New Token Authorized!! ');
+			$access = $myservice->authorizeClient($code);
+			
 		}else if($error == 'access_denied'){
 			drupal_set_message('Access Rejected. Kindly Allow Application to use your account.', 'error');
 		}

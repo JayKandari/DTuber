@@ -46,6 +46,9 @@ class YouTubeService {
 		$this->client->setClientSecret($this->client_secret);
 		$this->client->setScopes('https://www.googleapis.com/auth/youtube');
 		$this->client->setRedirectUri($this->redirect_uri);
+		// These two are required to get refresh_token.
+		$this->client->setApprovalPrompt("force");
+		$this->client->setAccessType("offline");
 	}
 
 	public function revokeAuth(){
@@ -63,16 +66,43 @@ class YouTubeService {
 	}
 
 	public function authorizeClient($code) {
+		$this->client->setAccessType("offline");
 		$this->client->authenticate($code);
 
-		return $this->client->getAccessToken();
+		// store token into database.
+		$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
+		$config->set('access_token', $this->client->getAccessToken())->save();
+		$config->set('refresh_token', $this->client->getRefreshToken())->save();
+
+		drupal_set_message('New Token Authorized!! ');
+
+	}
+
+	protected function refreshToken(){
+		$token = $this->client->refreshToken($this->getConfig('refresh_token'));
+
+		$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
+		$config->set('access_token', $token)->save();
+		$config->set('refresh_token', $this->client->getRefreshToken())->save();
+		
+		drupal_set_message('Token Refreshed.');
 	}
 
 	/**
 	 * Uploads video to YouTube.
 	 */
 	public function uploadVideo(){
-		kint($this->client);
+		// check whether token expired or not. 
+			$token = $this->getConfig('access_token');
+			$time_created = $token['created'];
+			$t=time();
+			$timediff=$t - $time_created;
+			if($timediff > 3600){
+				// refresh token.
+				drupal_set_message('Applying for token refresh.. ');
+				$this->refreshToken();
+			}
+		// kint($this->client);
 		try{
 			$html = '<p><strong>Client Authorized: </strong></p>';
 			$youtube = new \Google_Service_YouTube($this->client);
