@@ -30,15 +30,36 @@ class DtuberField extends FieldItemBase {
 	public static function schema(FieldStorageDefinitionInterface $field_definition) {
 		return array(
 			'columns' => array(
-				'value' => array(
-					'type' => 'char',
+				# reference: http://drupal.stackexchange.com/questions/13211/database-schema-for-image-field
+				# FID to store managed_file in db.
+				'fid' => array(
+					'type' => 'int',
+					'not null' => FALSE,
+				),
+				# reference: http://drupal.stackexchange.com/questions/87962/which-type-to-use-for-checkbox-fields-in-hook-field-schema
+				# file_uploaded_to_youtube : yes/no 
+				'yt_uploaded' => array(
+					'type' => 'int',
+					'size' => 'tiny',
+					'not null' => FALSE,
+					'default' => 0,
+				),
+
+				# youtube_videoid : youtube VIDEO ID 
+				'yt_videoid' => array(
+					'type' => 'varchar',
 					'length' => 255,
 					'not null' => FALSE,
 				),
+				'value' => array(
+					'type' => 'char',
+					'length' => 225,
+					'not null' => FALSE,
+				),
 			),
-			'indexes' => array(
-				'value' => array('value'),
-			),
+			// 'indexes' => array(
+			// 	'fid' => array('fid'),
+			// ),
 		);
 	}
 
@@ -46,7 +67,10 @@ class DtuberField extends FieldItemBase {
 	 * {@inheritdocs}
 	 */
 	public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition){
-		$properties['value'] = DataDefinition::create('string')->setLabel(t('DTuber Field'));
+		$properties['fid'] = DataDefinition::create('integer')->setLabel(t('Upload Video'));
+		$properties['yt_uploaded'] = DataDefinition::create('string')->setLabel(t('Video uploaded to YouTube?'));
+		$properties['yt_videoid'] = DataDefinition::create('string')->setLabel(t('YouTube Video ID'));
+		$properties['value'] = DataDefinition::create('string')->setLabel(t('Sample Value'));
 
 		return $properties;
 	}
@@ -55,8 +79,11 @@ class DtuberField extends FieldItemBase {
 	 * {@inheritdocs}
 	 */
 	public function isEmpty(){
-		$value = $this->get('value')->getValue();
-		return $value === NULL || $value === '';
+		// $value = $this->get('value')->getValue();
+		$fid = $this->get('fid')->getValue();
+		$vid = $this->get('yt_videoid')->getValue();
+		// If none of fid or youtube VId is present then it is considered empty.
+		return ($fid === NULL && ($vid === '' || $vid === NULL));
 	}
 
 	/**
@@ -80,8 +107,8 @@ class DtuberField extends FieldItemBase {
 	/**
 	 * {@inheritdocs}
 	 */
-	public function postSave($data){
-		$_SESSION['message'] = $data;
-		drupal_set_message("DtuberField->postSave() Fired. ");
-	}
+	// public function postSave($data){
+	// 	$_SESSION['message'] = $data;
+	// 	drupal_set_message("DtuberField->postSave() Fired. ");
+	// }
 }

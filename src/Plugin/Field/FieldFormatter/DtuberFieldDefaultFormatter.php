@@ -36,10 +36,13 @@ class DtuberFieldDefaultFormatter extends FormatterBase {
 		// $event = $dispatcher->dispatch('remove_x_frame_options_subscriber', $e);
 		# -----------------------------------------------
 		$elements = array();
+		// kint($items);
 		foreach ($items as $delta => $item) {
-			if($item->value) {
+			if($item) {
+
 				$options = array(
-					'src' =>  $item->value,
+					'src' =>  'http://youtube.com/watch/v/' . $item->yt_videoid . '?version=3',
+					'value' => $item->value,
 				);
 				$elements[$delta] = array(
 					'#theme' => 'dtuber_field_formatter',

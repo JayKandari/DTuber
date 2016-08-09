@@ -28,13 +28,29 @@ class DtuberFieldDefaultWidget extends WidgetBase {
 	 */
 	public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
 		// $dtuber_fields = \Drupal::service('dtuber_field_manager')->getList();
-		$element['value'] = $element + array(
+		// $element['value'] = $element + array(
+		// 	'#type' => 'textfield',
+		// 	'#empty_value' => '',
+		// 	'#default_value' => (isset($items[$delta]->value)) ? $items[$delta]->value : NULL,
+		// 	'#description' => $this->t('Provide Video'),
+		// 	'#maxlength' => 255,
+		// 	'#size' => $this->getSetting('size'),
+		// );
+		$element[] = $element + array(
+			'#type' => 'managed_file',
+			'#description' => $this->t('Video upload to YouTube'),
+			'#upload_location' => 'public://dtuber_files',
+			'#default_value' => (isset($items[$delta]->fid)) ? $items[$delta]->fid : NULL,
+			'#upload_validators' => array(
+				'file_validate_extensions' => array('mov mp4 avi'),
+				// Pass the maximum file size in bytes
+				// 'file_validate_size' => array(MAX_FILE_SIZE*1024*1024),
+			),
+		);
+		$element[] = array(
 			'#type' => 'textfield',
-			'#empty_value' => '',
+			'#title' => t('Some value'),
 			'#default_value' => (isset($items[$delta]->value)) ? $items[$delta]->value : NULL,
-			'#description' => $this->t('Provide Video'),
-			'#maxlength' => 255,
-			'#size' => $this->getSetting('size'),
 		);
 
 		return $element;

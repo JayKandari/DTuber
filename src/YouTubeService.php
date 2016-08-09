@@ -79,13 +79,18 @@ class YouTubeService {
 	}
 
 	protected function refreshToken(){
-		$token = $this->client->refreshToken($this->getConfig('refresh_token'));
-
-		$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
-		$config->set('access_token', $token)->save();
-		$config->set('refresh_token', $this->client->getRefreshToken())->save();
+		$TOKEN = ($this->getConfig('refresh_token'))? $this->getConfig('refresh_token') : $this->getConfig('access_token');
+		$token = $this->client->refreshToken($TOKEN);
+		if($token['access_token']){
+			$this->authorizeClient($token['access_token']);
+		}else if($token['error']) {
+			drupal_set_message('Error Occured:'. json_encode($token), 'error');
+		}
+		// $config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
+		// $config->set('access_token', $token)->save();
+		// $config->set('refresh_token', $this->client->getRefreshToken())->save();
 		
-		drupal_set_message('Token Refreshed.');
+		// drupal_set_message('Token Refreshed.');
 	}
 
 	/**

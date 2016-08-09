@@ -42,11 +42,25 @@ class DtuberConfigForm extends ConfigFormBase {
 			);
 		}else{
 			$myservice = \Drupal::service('dtuber_youtube_service');
-			$auth_url = $myservice->getAuthUrl();
-			$form['authorize'] = array(
-				'#type' => 'markup',
-				'#markup' => '<strong>UnAuthorized : Click <a href="'.$auth_url.'">Here</a> to Authorize.</strong>',
-			);
+			$hasClientIds = $config->get('client_id');
+			$hasClientSecret = $config->get('client_secret');
+			$hasRedirectUri = $config->get('redirect_uri');
+			function isEmpty($item){
+				return ($item === NULL || $item === '');
+			}
+			if(!isEmpty($hasClientIds) && !isEmpty($hasClientSecret) && !isEmpty($hasRedirectUri)  ) {
+				$auth_url = $myservice->getAuthUrl();
+				$form['authorize'] = array(
+					'#type' => 'markup',
+					'#markup' => '<strong>UnAuthorized : Click <a href="'.$auth_url.'">Here</a> to Authorize.</strong>',
+				);
+			}else{
+				$form['authorize'] = array(
+					'#type' => 'markup',
+					'#markup' => '<strong>Provide Client Details : </strong>fill in Client id, secret & redirect uri to get auth_url',
+				);
+			}
+
 		}
 
 		$form['dtuber_client_id'] = array(
@@ -102,9 +116,9 @@ class DtuberConfigForm extends ConfigFormBase {
 
 		drupal_set_message('Configuration saved !!');
 
-		$fid = $form_state->getValue('test_file')[0];
+		// $fid = $form_state->getValue('test_file')[0];
 		// $file = \Drupal\Core\Entity\File::load($fid);
-		$_SESSION['file'] = file_load($fid);
+		// $_SESSION['file'] = file_load($fid);
 		// kint($file);
 
 		parent::submitForm($form, $form_state);
