@@ -25,6 +25,8 @@ class TestUploadForm extends FormBase {
 		$form['title'] = array(
 			'#type' => 'textfield',
 			'#title' => 'Video Title',
+			'#description' => 'Provide Title for this Video.',
+			'#required' => TRUE,
 		);
 		$form['description'] = array(
 			'#type' => 'textarea',
@@ -39,6 +41,7 @@ class TestUploadForm extends FormBase {
 			'#upload_validators' => array(
 				'file_validate_extensions' => $allowed_exts,
 			),
+			'#required' => TRUE,
 		);
 		$form['tags'] = array(
 			'#type' => 'textfield',

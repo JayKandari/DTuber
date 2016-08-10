@@ -213,7 +213,8 @@ class YouTubeService {
 
 		    $html .= '</ul>';
 
-		    drupal_set_message('Video Upload Successful.');
+		    $youtubelink = 'http://youtube.com/watch?v='.$status['id'];
+		    drupal_set_message('Video Upload Successful. <a href="'.$youtubelink.'">Watch Video</a>');
 		    # returns 
 			return $html;
 		}catch(\Exception $e) {
@@ -243,6 +244,8 @@ class YouTubeService {
 		$htmlBody = "<h3>Channel Details:</h3>";
 		$htmlBody .= sprintf('<p><strong>YouTube Channel Name:</strong> %s </p>',$channelTitle);
 		$htmlBody .= sprintf('<p><strong>Description:</strong> %s </p>',$channelDesc);
+		global $base_url;
+		$htmlBody .= '<p><a href="'.$base_url.'/dtuber/testform">Test Upload Form</a></p>';
 
 		return $htmlBody;
 	}
