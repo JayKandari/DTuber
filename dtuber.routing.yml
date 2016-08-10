@@ -28,6 +28,6 @@ dtuber.testform:
   path: '/dtuber/testform'
   defaults:
     _form: '\Drupal\dtuber\Form\TestUploadForm'
-    _title: 'Test Upload Form'
+    _title: 'DTuber Test Form'
   requirements:
     _permission: 'access content'

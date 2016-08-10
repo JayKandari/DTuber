@@ -8,6 +8,7 @@ namespace Drupal\dtuber\Form;
 
 use \Drupal\Core\Form\FormBase;
 use \Drupal\Core\Form\FormStateInterface;
+use \Drupal\file\Entity\File;
 
 
 class TestUploadForm extends FormBase {
@@ -21,13 +22,28 @@ class TestUploadForm extends FormBase {
 	 * {@inheritdocs}
 	 */
 	public function buildForm(array $form, FormStateInterface $form_state) {
-		$form['test_video'] = array(
+		$form['title'] = array(
+			'#type' => 'textfield',
+			'#title' => 'Video Title',
+		);
+		$form['description'] = array(
+			'#type' => 'textarea',
+			'#title' => 'Video Description',
+		);
+		$allowed_exts = array('mov mp4 avi mkv');
+		$form['video'] = array(
 			'#type' => 'managed_file',
 			'#title' => $this->t('Upload a Video'),
+			'#description' => 'Allowed Extensions: '. implode(', ', $allowed_exts),
 			'#upload_location' => 'public://dtuber_files',
 			'#upload_validators' => array(
-				'file_validate_extensions' => array('mov mp4 avi'),
+				'file_validate_extensions' => $allowed_exts,
 			),
+		);
+		$form['tags'] = array(
+			'#type' => 'textfield',
+			'#title' => 'Video Tags',
+			'#description' => 'Enter comma separated tags',
 		);
 
 		$form['submit'] = array(
@@ -41,13 +57,27 @@ class TestUploadForm extends FormBase {
 	 * {@inheritdocs}
 	 */
 	public function submitForm(array &$form, FormStateInterface $form_state) {
-		$file = $form_state->get('test_video');
-		dpm($file);
+		$file = $form_state->getValue('video');
+		drupal_set_message('File ID'. $file[0]);
+		$file = file_load($file[0]);
+		$path = file_create_url($file->getFileUri());
+		drupal_set_message('file: '. $path);
+		// exit();
+		global $base_url;
+		$myservice = \Drupal::service('dtuber_youtube_service');
+		$options = array(
+			'path' => str_replace($base_url, '', $path),
+			'title' => $form_state->getValue('title'),
+			'description' => $form_state->getValue('description'),
+			'tags' => explode(',', $form_state->getValue('tags')),
+		);
+		$html = $myservice->uploadVideo($options);
+
 		// $_SESSION['message'] = $file;
 		drupal_set_message('TestUploadForm form Submitted');
 
-		return array(
-			'#markup' => 'Form Submitted',
-		);
+		// return array(
+		// 	'#markup' => 'Form Submitted',
+		// );
 	}
 }

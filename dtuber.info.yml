@@ -1,5 +1,5 @@
-name: DTuber - YouTube Field Module
-description: Provides a video field & Uploads videos to YouTube
+name: DTuber
+description: Uploads videos to YouTube
 core: 8.x
 type: module
 package: Media

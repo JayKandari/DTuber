@@ -131,22 +131,28 @@ class YouTubeService {
 	/**
 	 * Uploads video to YouTube.
 	 */
-	public function uploadVideo(){
+	public function uploadVideo($options = null){
 		try{
 			// Will set tokens & refresh token when necessary.
 			$this->manage_tokens();
 
 			$html = '<p><strong>Client Authorized: </strong></p>';
 			$youtube = new \Google_Service_YouTube($this->client);
-			
-			$videoPath = "./videos.mp4";
+			if(isset($options)){
+				$videoPath = './'.$options['path'];
+			}else{
+				$videoPath = "./videos.mp4";
+			}
 
 		    // video category.
 		    $snippet = new \Google_Service_YouTube_VideoSnippet();
 		    $cur_time = date('h:i a, M-d-Y', time());
-		    $snippet->setTitle("Test title - ". $cur_time);
-		    $snippet->setDescription("Test description lorem ipsum... ". $cur_time);
-		    $snippet->setTags(array("tag1", "tag2"));
+		    $title = (isset($options))? $options['title'] : "Test title - ". $cur_time;
+		    $snippet->setTitle($title);
+		    $description = (isset($options))? $options['description'] : "Test description - ". $cur_time;
+		    $snippet->setDescription($description);
+		    $tags = (isset($options))? $options['tags'] : array("tag1", "tag2");
+		    $snippet->setTags($tags);
 
 		    // Numeric video category. See
 		    // https://developers.google.com/youtube/v3/docs/videoCategories/list
