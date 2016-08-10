@@ -15,25 +15,79 @@ class YouTubeService {
 	protected $redirect_uri;
 	protected $client;
 
+	/*
+	 * returns if all the 3 credentials available. 
+	 */
+	public function getCredentials(){
+		$client_id = $this->getConfig('client_id');
+		$client_secret = $this->getConfig('client_secret');
+		$redirect_uri = $this->getConfig('redirect_uri');
+
+		if(isset($client_id) && isset($client_secret) && isset($redirect_uri)) {
+			// credentials present. 
+			$this->client_id = $client_id;
+			$this->client_secret = $client_secret;
+			$this->redirect_uri = $redirect_uri;
+			return array(
+				'client_id' => $client_id, 'client_secret' => $client_secret, "redirect_uri" => $redirect_uri,
+			);
+		}else{
+			drupal_set_message('DTuber\YouTubeService: Credentials not present.', 'warning');
+			return false;
+		}
+	}
+
 	public function __construct() {
 		
-		$this->client_id = $this->getConfig('client_id');
-		$this->client_secret = $this->getConfig('client_secret');
-		$this->redirect_uri = $this->getConfig('redirect_uri');
-
+		if(! $this->getCredentials()){
+			// credentials present
+			return false;
+		}
 		// set client;
 		$this->client = new \Google_Client();
 
 		// initialize client
-		$this->initializeClient();
+		// $this->initializeClient();
+		$this->client->setClientId($this->client_id);
+		$this->client->setClientSecret($this->client_secret);
+		$this->client->setScopes('https://www.googleapis.com/auth/youtube');
+		$this->client->setRedirectUri($this->redirect_uri);
+		// These two are required to get refresh_token.
+		$this->client->setAccessType("offline");
+		$this->client->setApprovalPrompt("force");
 
-		# set access token
-		$this->access_token();
 	}
 
-	protected function access_token(){
-		// $this->client->authenticate(get('code'));
-		$this->client->setAccessToken(json_encode($this->getConfig('access_token')));
+	protected function manage_tokens() {
+		# Calculate token expiry 
+		$token = $this->getConfig('access_token');
+		$this->client->setAccessToken($token);
+		# and perform required action.
+		if($this->client->isAccessTokenExpired()){
+			// if Token expired. 
+			// we need to refresh token in this case. 
+			drupal_set_message('Token Expired. Trying to refresh token', 'warning');
+			// Check whether we have a refresh token or not. 
+			$refreshToken = $this->getConfig('refresh_token');
+			if($refreshToken != NULL){
+				// if refresh token present. 
+				$this->client->refreshToken($refreshToken);
+				$newToken = $this->client->getAccessToken();
+				$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
+				$config->set('access_token', $newToken)->save();
+				drupal_set_message('access_token Refreshed!');
+			}else{
+				// if refresh token isn't present.
+				$this->client->refreshToken($refreshToken);
+				$newToken = $this->client->getAccessToken();
+				$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
+				$config->set('access_token', $newToken)->save();
+				drupal_set_message('access_token refreshed for first Time. ');
+			}
+		}else{
+			// Good TOken. Continue..
+			// drupal_set_message('Good Token');
+		}
 	}
 
 	protected function getConfig($config){
@@ -41,15 +95,11 @@ class YouTubeService {
 		return \Drupal::config('dtuber.settings')->get($config);
 	}
 
-	protected function initializeClient(){
-		$this->client->setClientId($this->client_id);
-		$this->client->setClientSecret($this->client_secret);
-		$this->client->setScopes('https://www.googleapis.com/auth/youtube');
-		$this->client->setRedirectUri($this->redirect_uri);
-		// These two are required to get refresh_token.
-		$this->client->setApprovalPrompt("force");
-		$this->client->setAccessType("offline");
-	}
+	// This code is generating error. {{ $value is passed NULL. }}
+	// protected function setConfig($config, $value) {
+	// 	$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
+	// 	$config->set($config, $value)->save();
+	// }
 
 	public function revokeAuth(){
 		/**
@@ -78,37 +128,14 @@ class YouTubeService {
 
 	}
 
-	protected function refreshToken(){
-		$TOKEN = ($this->getConfig('refresh_token'))? $this->getConfig('refresh_token') : $this->getConfig('access_token');
-		$token = $this->client->refreshToken($TOKEN);
-		if($token['access_token']){
-			$this->authorizeClient($token['access_token']);
-		}else if($token['error']) {
-			drupal_set_message('Error Occured:'. json_encode($token), 'error');
-		}
-		// $config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
-		// $config->set('access_token', $token)->save();
-		// $config->set('refresh_token', $this->client->getRefreshToken())->save();
-		
-		// drupal_set_message('Token Refreshed.');
-	}
-
 	/**
 	 * Uploads video to YouTube.
 	 */
 	public function uploadVideo(){
-		// check whether token expired or not. 
-			$token = $this->getConfig('access_token');
-			$time_created = $token['created'];
-			$t=time();
-			$timediff=$t - $time_created;
-			if($timediff > 3600){
-				// refresh token.
-				drupal_set_message('Applying for token refresh.. ');
-				$this->refreshToken();
-			}
-		// kint($this->client);
 		try{
+			// Will set tokens & refresh token when necessary.
+			$this->manage_tokens();
+
 			$html = '<p><strong>Client Authorized: </strong></p>';
 			$youtube = new \Google_Service_YouTube($this->client);
 			
@@ -179,11 +206,13 @@ class YouTubeService {
 		        $status['id']);
 
 		    $html .= '</ul>';
+
+		    drupal_set_message('Video Upload Successful.');
+		    # returns 
+			return $html;
 		}catch(\Exception $e) {
 			drupal_set_message('\Drupal\dtuber\YouTube : ' . $e->getMessage(), 'error');
 		}
-
-		# returns 
-		return $html;
+		
 	}
 }

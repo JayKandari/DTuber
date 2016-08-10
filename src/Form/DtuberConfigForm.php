@@ -38,7 +38,10 @@ class DtuberConfigForm extends ConfigFormBase {
 			$form['dtuber_access_token'] = array(
 				'#type' => 'markup',
 				// '#title' => 'Access Token',
-				'#markup' => '<strong>Access Token : </strong>'. json_encode($config->get('access_token')) . $revoke,
+				'#markup' => '
+				<p><strong>Access Token : </strong>'. json_encode($config->get('access_token')) . '</p>'. 
+				'<p><strong>Refresh Token : </strong>'. json_encode($config->get('refresh_token')). '</p>'. 
+				$revoke,
 			);
 		}else{
 			$myservice = \Drupal::service('dtuber_youtube_service');
