@@ -43,6 +43,14 @@ class DtuberConfigForm extends ConfigFormBase {
 				'<p><strong>Refresh Token : </strong>'. json_encode($config->get('refresh_token')). '</p>'. 
 				$revoke,
 			);
+
+			$myservice = \Drupal::service('dtuber_youtube_service');
+			// Channel Details.
+			$form['channel_details'] = array(
+				'#type' => 'markup',
+				'#markup' => $myservice->youTubeAccount(),
+			);
+
 		}else{
 			$myservice = \Drupal::service('dtuber_youtube_service');
 			$hasClientIds = $config->get('client_id');

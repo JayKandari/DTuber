@@ -13,3 +13,4 @@ Drupal 8 module for uploading videos to youtube
 * https://drupalize.me/blog/201502/responding-events-drupal-8
 * https://www.drupal.org/node/2064123
 * https://www.computerminds.co.uk/drupal-code/drupal-8-creating-custom-field-part-1-field-type
+* http://stackoverflow.com/questions/9241213/how-to-refresh-token-with-google-api-client
