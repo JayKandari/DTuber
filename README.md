@@ -5,12 +5,27 @@ Drupal 8 module for uploading videos to youtube
 
 # Dependencies
 
-* google-client-api-php (https://github.com/google/google-api-php-client)
+This module requires [Google Client API](https://github.com/google/google-api-php-client)
 
-# Installation
+Install google-api-php-client by following command  
 
-**\*\*TODO\*\***
+> composer require google/apiclient:^2.0 
 
+# Module Usage:
+1. Clone this repo inside **/modules/** directory
+2. Enable DTuber module (via drush or by Drupal's Extend page)
+3. navigate to Dtuber Config page : **/admin/config/media/dtuber_config**
+4. Create an application at http://console.developers.google.com. Set Client ID, Client Secret & Redirect uri.
+5. Make sure Redirect uri matches as per given in description of DTuber Config page.
+6. Then Click link which says 'Click here to Authorize'. That will ask for your youtube channel's permission.
+7. You are ready to go. Goto this test form (**/dtuber/testform**) to test DTuber. Check your YouTube Channel for latest updated Video. 
+8. Alternatively, An Extra CCK Field(**Dtuber - Upload to YouTube**) is added under "Media" category. Add to any of your Content Type.
+9. When creating a new content. Add a video, and click save. 
+10. Video will get uploaded to your Channel.
+11. Make sure you enter google credentials to be able to use this module effectively. Enjoy !!
+
+# Bugs/Features/Warning/Contrib:
+This module is under development. Do let me ([Tweet](http://twitter.com/JayKandari)) know for any Bugs/Feature/Contribs/etc... :)
 
 # References
 * https://capgemini.github.io/drupal/writing-custom-fields-in-drupal-8/
@@ -26,3 +41,4 @@ Drupal 8 module for uploading videos to youtube
 * https://www.drupal.org/node/1985716
 * https://www.drupal.org/node/1882526
 * https://www.webwash.net/drupal/tutorials/upgrading-code-snippets-module-drupal-8-creating-custom-field
+* And Many more... 
