@@ -32,11 +32,11 @@ class TestUploadForm extends FormBase {
 			'#type' => 'textarea',
 			'#title' => 'Video Description',
 		);
-		$allowed_exts = array('mov mp4 avi mkv');
+		$allowed_exts = array('mov mp4 avi mkv ogv webm 3gp flv');
 		$form['video'] = array(
 			'#type' => 'managed_file',
 			'#title' => $this->t('Upload a Video'),
-			'#description' => 'Allowed Extensions: '. implode(', ', $allowed_exts),
+			'#description' => 'Allowed Extensions: '. implode(', ', explode(' ', $allowed_exts[0])),
 			'#upload_location' => 'public://dtuber_files',
 			'#upload_validators' => array(
 				'file_validate_extensions' => $allowed_exts,

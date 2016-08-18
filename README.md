@@ -3,6 +3,15 @@ Drupal 8 module for uploading videos to youtube
 
 > Current Status: **Under Development**
 
+# Dependencies
+
+* google-client-api-php (https://github.com/google/google-api-php-client)
+
+# Installation
+
+**\*\*TODO\*\***
+
+
 # References
 * https://capgemini.github.io/drupal/writing-custom-fields-in-drupal-8/
 * http://drupal.stackexchange.com/questions/188924/how-to-embed-drupal-content-in-other-sites-remove-x-frame-options-sameorigin/188925
@@ -14,3 +23,6 @@ Drupal 8 module for uploading videos to youtube
 * https://www.drupal.org/node/2064123
 * https://www.computerminds.co.uk/drupal-code/drupal-8-creating-custom-field-part-1-field-type
 * http://stackoverflow.com/questions/9241213/how-to-refresh-token-with-google-api-client
+* https://www.drupal.org/node/1985716
+* https://www.drupal.org/node/1882526
+* https://www.webwash.net/drupal/tutorials/upgrading-code-snippets-module-drupal-8-creating-custom-field

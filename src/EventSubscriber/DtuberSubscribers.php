@@ -26,6 +26,6 @@ class DtuberSubscribers implements EventSubscriberInterface {
 			unset($_SESSION['message']);
 			// drupal_set_message($_SESSION['message']->getValue());
 		}
-		drupal_set_message('KernelEvents::REQUEST Fired.');
+		// drupal_set_message('KernelEvents::REQUEST Fired.');
 	}
 }

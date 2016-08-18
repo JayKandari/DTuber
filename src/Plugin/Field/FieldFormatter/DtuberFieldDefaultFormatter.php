@@ -35,21 +35,27 @@ class DtuberFieldDefaultFormatter extends FormatterBase {
 		// $e = new Event($items);
 		// $event = $dispatcher->dispatch('remove_x_frame_options_subscriber', $e);
 		# -----------------------------------------------
-		$elements = array();
+		$html = '';
+		$elements = [];
 		// kint($items);
 		foreach ($items as $delta => $item) {
 			if($item) {
 
 				$options = array(
 					'src' =>  'http://youtube.com/watch/v/' . $item->yt_videoid . '?version=3',
-					'value' => $item->value,
+					'value' => $item->fid,
 				);
 				$elements[$delta] = array(
 					'#theme' => 'dtuber_field_formatter',
 					'#options' => $options,
 				);
+				// kint($item);
+				// $html .= '<pre>FileID: '.$item->fid.'</pre>';
 			}
 		}
 		return $elements;
+	// 	return [
+	// 		'#markup' => $html,
+	// 	];
 	}
 }

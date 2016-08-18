@@ -10,11 +10,13 @@ class RemoveXFrameOptionsSubscriber implements EventSubscriberInterface {
 
   public function RemoveXFrameOptions(FilterResponseEvent $event) {
     $response = $event->getResponse();
-    $response->headers->remove('X-Frame-Options');
+    // $response->headers->remove('X-Frame-Options');
+    $response->headers->set('X-Frame-Options', 'ALLOW-FROM *');
+    // drupal_set_message('removing xframeoptions');
   }
 
   public static function getSubscribedEvents() {
-    $events[KernelEvents::RESPONSE][] = array('RemoveXFrameOptions', -10);
+    $events[KernelEvents::RESPONSE][] = array('RemoveXFrameOptions');
     return $events;
   }
 }

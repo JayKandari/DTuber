@@ -139,7 +139,7 @@ class YouTubeService {
 			$html = '<p><strong>Client Authorized: </strong></p>';
 			$youtube = new \Google_Service_YouTube($this->client);
 			if(isset($options)){
-				$videoPath = './'.$options['path'];
+				$videoPath = '.'.urldecode($options['path']);
 			}else{
 				$videoPath = "./videos.mp4";
 			}
@@ -215,12 +215,20 @@ class YouTubeService {
 
 		    $youtubelink = 'http://youtube.com/watch?v='.$status['id'];
 		    drupal_set_message('Video Upload Successful. <a href="'.$youtubelink.'">Watch Video</a>');
-		    # returns 
-			return $html;
+
+		    # returns an array of important values;
+			return [
+				'status' => 'OK', // Status of OK means video successfully uploaded. 
+				'markup' => $html,
+				'video_id' => $status['id'],
+			];
 		}catch(\Exception $e) {
 			drupal_set_message('\Drupal\dtuber\YouTube : ' . $e->getMessage(), 'error');
 		}
-		
+		// by default it sends false value. 
+		return [
+			'status' => 'ERROR', // Status of ERROR means, video not uploaded. 
+		];
 	}
 
 	/**

@@ -28,54 +28,97 @@ class DtuberFieldDefaultWidget extends WidgetBase {
 	 */
 	public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
 		// $dtuber_fields = \Drupal::service('dtuber_field_manager')->getList();
-		// $element['value'] = $element + array(
-		// 	'#type' => 'textfield',
-		// 	'#empty_value' => '',
-		// 	'#default_value' => (isset($items[$delta]->value)) ? $items[$delta]->value : NULL,
-		// 	'#description' => $this->t('Provide Video'),
-		// 	'#maxlength' => 255,
-		// 	'#size' => $this->getSetting('size'),
-		// );
-		$element[] = $element + array(
+		// kint($items);
+		$item = $items[$delta];
+		$fid = $item->getValue('fid');
+		$element['fid'] = [
 			'#type' => 'managed_file',
-			'#description' => $this->t('Video upload to YouTube'),
+			'#title' => $this->t('Upload Video'),
+			'#description' => $this->t('this video will get uploaded to YouTube'),
 			'#upload_location' => 'public://dtuber_files',
-			'#default_value' => (isset($items[$delta]->fid)) ? $items[$delta]->fid : NULL,
+			// '#default_value' => (!$item->getValue('fid'))? [13] : NULL,
+			// '#default_value' => ($item->isEmpty())? NULL : [$item->getValue('fid')['fid']],
+			'#default_value' => NULL,
 			'#upload_validators' => array(
-				'file_validate_extensions' => array('mov mp4 avi'),
+				'file_validate_extensions' => array('mov mp4 avi mkv 3gp '),
 				// Pass the maximum file size in bytes
 				// 'file_validate_size' => array(MAX_FILE_SIZE*1024*1024),
 			),
-		);
-		$element[] = array(
-			'#type' => 'textfield',
-			'#title' => t('Some value'),
-			'#default_value' => (isset($items[$delta]->value)) ? $items[$delta]->value : NULL,
-		);
+		];
+		$element['fid_revision'] = [
+	        '#type' => 'hidden',
+	        '#default_value' => NULL,
+	        // '#default_value' => (!$item->isEmpty() )? [$item->fid] : NULL,
+	    ];
+
+		// drupal_set_message('Hello ::'.$item->getValue('fid')['fid']);
+		// kint($item->get('fid'));
+		if(!$item->isEmpty()) {
+			// when field is NOT empty. Set a default value for fid.
+			$element['fid']['#default_value'] = [$item->get('fid')->getValue()];
+			$element['fid_revision']['#default_value'] = [$item->get('fid')->getValue()];
+		}
+
+
+	    $element['yt_uploaded'] = [
+	    	'#type'  => 'hidden',
+	    	'#default_value' => ($item->get('yt_uploaded')->getValue())? $item->get('yt_uploaded')->getValue() : 0,
+	    ];
+
+	    $element['yt_videoid'] = [
+	    	'#type'  => 'hidden',
+	    	'#default_value' => ($item->get('yt_videoid')->getValue())? $item->get('yt_videoid')->getValue() : '',
+	    ];
+
+	    $element += [
+			'#type' => 'fieldset',
+			'#description' => $this->t('DTuber Field: This video will get upload to YouTube'),
+		];
 
 		return $element;
 	}
 
 	/**
+	 * {@inheritdoc}
+	 */
+	public function massageFormValues(array $values, array $form, FormStateInterface $form_state)
+	{
+		# Help From: http://stackoverflow.com/questions/38996037/drupal-8-field-plugin-with-field-type-managed-file
+	    foreach ($values as &$value) {
+	        if (count($value['fid'])) {
+	            foreach ($value['fid'] as $fid) {
+	                $value['fid'] = $fid;
+	            }
+	        } else {
+	            $value['fid'] = $value['fid_revision'] !== '' ? $value['fid_revision'] : NULL;
+	        }
+
+	    }
+
+
+	    return $values;
+	}
+
+	/**
 	 * {@inheritdocs}
 	 */
-	public static function defaultSettings(){
-		return array(
-			'size' => '60',
-			'placeholder' => '',
-		) + parent::defaultSettings();
-	}
+	// public static function defaultSettings(){
+	// 	return array(
+	// 		'size' => '60',
+	// 		'placeholder' => '',
+	// 	) + parent::defaultSettings();
+	// }
 }
 
 /**
  * Implements hook_help().
  */
-function dtuber_help($route_name, RouteMatchInterface $route_match) {
-	switch ($route_name) {
-		case 'help.page.dtuber':
-			$output = '';
-			$output .= '&lt;h3&gt;'. t('DTuber') . '&lt;/h3&gt;';
-			$output .= '&lt;p&gt;'. t('DTuber module creates a Dtuber Field, which uploads video to YouTube & provide a YouTube play to play same video. ') . '&lt;/p&gt;';
-			return $output;
-	}
-}
+// function dtuber_help($route_name, RouteMatchInterface $route_match) {
+// 	switch ($route_name) {
+// 		case 'help.page.dtuber':
+// 			$output = '';
+// 			$output .= '&lt;h3&gt;'. t('DTuber') . '&lt;/h3&gt;';
+// 			$output .= '&lt;p&gt;'. t('DTuber module creates a Dtuber Field, which uploads video to YouTube & provide a YouTube play to play same video. ') . '&lt;/p&gt;';
+// 			return $output;
+// 	}
+// }
