@@ -9,21 +9,21 @@ This module requires [Google Client API](https://github.com/google/google-api-ph
 
 Install google-api-php-client by following command  
 
-> composer require google/apiclient:^2.0 
+`composer require google/apiclient:^2.0`
 
 # Module Usage:
 1. Install Google Client API Library via composer.
 2. Clone/Download this repo to **/modules/dtuber** directory
-2. Enable DTuber module (via drush or by Drupal's Extend page)
-3. navigate to Dtuber Config page : **/admin/config/media/dtuber_config**
-4. Create an application at http://console.developers.google.com. Set Client ID, Client Secret & Redirect uri. **Enable YouTube Data API**. 
-5. Make sure Redirect uri matches as per given in description of DTuber Config page.
-6. Then Click link which says 'Click here to Authorize'. That will ask for your youtube channel's permission.
-7. You are ready to go. Goto this test form (**/dtuber/testform**) to test DTuber. Check your YouTube Channel for latest updated Video. 
-8. Alternatively, An Extra CCK Field(**Dtuber - Upload to YouTube**) is added under "Media" category. Add to any of your Content Type.
-9. When creating a new content. Add a video, and click save. 
-10. Video will get uploaded to your Channel.
-11. Make sure you enter google credentials to be able to use this module effectively. Enjoy !!
+3. Enable DTuber module (via drush or by Drupal's Extend page)
+4. Create an application at http://console.developers.google.com. Set Client ID, Client Secret & Redirect uri. **Enable YouTube Data API**.
+5. navigate to Dtuber Config page : **/admin/config/media/dtuber_config**
+6. Make sure Redirect uri matches as per given in description of DTuber Config page.
+7. Then Click link which says 'Click here to Authorize'. That will ask for your youtube channel's permission.
+8. You are ready to go. Goto this test form (**/dtuber/testform**) to test DTuber. Check your YouTube Channel for latest updated Video. 
+9. Alternatively, An Extra CCK Field(**Dtuber - Upload to YouTube**) is added under "Media" category. Add to any of your Content Type.
+10. When creating a new content. Add a video, and click save. 
+11. Video will get uploaded to your Channel.
+12. Make sure you enter google credentials to be able to use this module effectively. Enjoy !!
 
 # Bugs/Features/Warning/Contrib:
 This module is under development. Do let me ([Tweet](http://twitter.com/JayKandari)) know for any Bugs/Feature/Contribs/etc... :)
