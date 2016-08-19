@@ -42,7 +42,7 @@ class DtuberFieldDefaultFormatter extends FormatterBase {
 			if($item) {
 
 				$options = array(
-					'src' =>  'http://youtube.com/watch/v/' . $item->yt_videoid . '?version=3',
+					'src' =>  'https://www.youtube.com/v/' . $item->yt_videoid . '?version=3&autoplay=1',
 					'value' => $item->fid,
 				);
 				$elements[$delta] = array(
