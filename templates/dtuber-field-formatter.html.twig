@@ -1,8 +1,10 @@
 <!-- #1. iframe version -->
 <!-- <iframe id="ytplayer" type="text/html" width="720" height="405" src="{{ options.src }}" frameborder="0" allowfullscreen> -->
+<!-- Option 2 for Iframe version. -->
+<iframe width="640" height="300" frameborder="0" allowfullscreen="allowfullscreen" src="https://www.youtube.com/embed/{{ options.vid }}?autoplay=0&amp;start=0&amp;rel=0"></iframe>
 
 <!-- #2. Flash Version -->
-<object width="640" height="390">
+<!-- <object width="640" height="390">
   <param name="movie"
          value="{{ options.src }}"></param>
   <param name="allowScriptAccess" value="always"></param>
@@ -10,11 +12,8 @@
          type="application/x-shockwave-flash"
          allowscriptaccess="always"
          width="640" height="390"></embed>
-</object>
+</object> -->
 
-
-<!-- BOB YouTube Channel -->
-<!-- https://www.youtube.com/channel/UC8GdUpRohKVOEP0opZ99lBA?guided_help_flow=3 -->
 
 <!-- {{ options | json_encode() }} -->
 

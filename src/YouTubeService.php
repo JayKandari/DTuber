@@ -38,24 +38,27 @@ class YouTubeService {
 	}
 
 	public function __construct() {
-		
-		if(! $this->getCredentials()){
-			// credentials present
-			return false;
-		}
-		// set client;
-		$this->client = new \Google_Client();
+		try {
+			if(! $this->getCredentials()){
+				// credentials present
+				return false;
+			}
+			// set client;
+			$this->client = new \Google_Client();
 
-		// initialize client
-		// $this->initializeClient();
-		$this->client->setClientId($this->client_id);
-		$this->client->setClientSecret($this->client_secret);
-		$this->client->setScopes('https://www.googleapis.com/auth/youtube');
-		$this->client->setRedirectUri($this->redirect_uri);
-		// These two are required to get refresh_token.
-		$this->client->setAccessType("offline");
-		$this->client->setApprovalPrompt("force");
+			// initialize client
+			// $this->initializeClient();
+			$this->client->setClientId($this->client_id);
+			$this->client->setClientSecret($this->client_secret);
+			$this->client->setScopes('https://www.googleapis.com/auth/youtube');
+			$this->client->setRedirectUri($this->redirect_uri);
+			// These two are required to get refresh_token.
+			$this->client->setAccessType("offline");
+			$this->client->setApprovalPrompt("force");
 
+		} catch (\Exception $e) {
+			drupal_set_message('\Drupal\dtuber\YouTube : ' . $e->getMessage(), 'error');
+		}		
 	}
 
 	protected function manage_tokens() {
@@ -149,9 +152,9 @@ class YouTubeService {
 		    $cur_time = date('h:i a, M-d-Y', time());
 		    $title = (isset($options))? $options['title'] : "Test title - ". $cur_time;
 		    $snippet->setTitle($title);
-		    $description = (isset($options))? $options['description'] : "Test description - ". $cur_time;
+		    $description = (isset($options))? $options['description'] : $options['title'] . ' \n-- '. $cur_time;
 		    $snippet->setDescription($description);
-		    $tags = (isset($options))? $options['tags'] : array("tag1", "tag2");
+		    $tags = (isset($options))? $options['tags'] : explode(' ', $options['title']);
 		    $snippet->setTags($tags);
 
 		    // Numeric video category. See

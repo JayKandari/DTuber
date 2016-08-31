@@ -3,7 +3,7 @@ description: Uploads videos to YouTube
 core: 8.x
 type: module
 package: Media
-version: 1.x
+version: 1.x-dev
 configure: dtuber.configform
 dependencies:
   - field
