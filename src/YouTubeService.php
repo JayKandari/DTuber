@@ -238,26 +238,32 @@ class YouTubeService {
 	 * Service to retrive YouTube Account Owner details.
 	 */
 	public function youTubeAccount() {
-		// Will set tokens & refresh token when necessary.
-		$this->manage_tokens();
+		try{
+			
+			// Will set tokens & refresh token when necessary.
+			$this->manage_tokens();
 
-		$youtube = new \Google_Service_YouTube($this->client);
+			$youtube = new \Google_Service_YouTube($this->client);
 
-		$channelsResponse = $youtube->channels->listChannels('brandingSettings', array(
-	      'mine' => 'true',
-	    ));
+			$channelsResponse = $youtube->channels->listChannels('brandingSettings', array(
+		      'mine' => 'true',
+		    ));
 
-		$channel = $channelsResponse->getItems()[0]->getBrandingSettings()->getChannel();
-		// kint($channelsResponse->getItems()[0]);
-		$channelTitle= $channel->title;
-		$channelDesc = $channel->description;
+			$channel = $channelsResponse->getItems()[0]->getBrandingSettings()->getChannel();
+			// kint($channelsResponse->getItems()[0]);
+			$channelTitle= $channel->title;
+			$channelDesc = $channel->description;
 
-		$htmlBody = "<h3>Channel Details:</h3>";
-		$htmlBody .= sprintf('<p><strong>YouTube Channel Name:</strong> %s </p>',$channelTitle);
-		$htmlBody .= sprintf('<p><strong>Description:</strong> %s </p>',$channelDesc);
-		global $base_url;
-		$htmlBody .= '<p><a href="'.$base_url.'/dtuber/testform">Test Upload Form</a></p>';
+			$htmlBody = "<h3>Channel Details:</h3>";
+			$htmlBody .= sprintf('<p><strong>YouTube Channel Name:</strong> %s </p>',$channelTitle);
+			$htmlBody .= sprintf('<p><strong>Description:</strong> %s </p>',$channelDesc);
+			global $base_url;
+			$htmlBody .= '<p><a href="'.$base_url.'/dtuber/testform">Test Upload Form</a></p>';
 
-		return $htmlBody;
+			return $htmlBody;
+
+		}catch(\Exception $e) {
+			drupal_set_message('\Drupal\dtuber\YouTube : ' . $e->getMessage(), 'error');
+		}
 	}
 }
