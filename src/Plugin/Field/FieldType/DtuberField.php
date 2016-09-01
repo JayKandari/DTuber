@@ -113,7 +113,7 @@ class DtuberField extends FieldItemBase {
 	 */
 	public function postSave($data){
 		// $_SESSION['message'] = $this;
-		drupal_set_message("DtuberField->postSave() Fired. ");
+		// drupal_set_message("DtuberField->postSave() Fired. ");
 		// make file permananet.
 		/* Fetch the array of the file stored temporarily in database */ 
 
@@ -186,7 +186,7 @@ class DtuberField extends FieldItemBase {
 					drupal_set_message('Unable to Upload video to YouTube.'. $video['status']);
 				}
 			}else{
-				drupal_set_message('YouTUbe Video ID already Exists... '. $field_val['yt_videoid']);
+				// drupal_set_message('YouTUbe Video ID already Exists... '. $field_val['yt_videoid']);
 			}
 		}else{
 			// When fid is empty... remove any extra video ids and uploaded flag
@@ -196,7 +196,7 @@ class DtuberField extends FieldItemBase {
 				'yt_uploaded' => 0,
 			];
 			$node->save();
-			drupal_set_message($field_id. ' Empty !!');
+			// drupal_set_message($field_id. ' Empty !!');
 		}
 	}
 }

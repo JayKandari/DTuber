@@ -99,11 +99,13 @@ class DtuberConfigForm extends ConfigFormBase {
 			'#disabled' => $hasAccessToken,
 		);
 
-		// $form['test_file'] = array(
-		// 	'#type' => 'managed_file',
-		// 	'#title' => 'Upload Something',
-		// 	'#upload_location' => 'public://dtuber_files/'
-		// );
+		$form['dtuber_allowed_exts'] = array(
+			'#type' => 'textfield',
+			'#title' => 'Allowed Extensions',
+			'#default_value' => $config->get('allowed_exts'),
+			'#description' => $this->t('Provide allowed extensions separated by a space. Eg: "mov mp4 avi mkv 3gp".'),
+			// '#disabled' => $hasAccessToken,
+		);
 		// if(isset($_SESSION['file'])){
 		// 	$file = $_SESSION['file'];
 		// 	kint($file);

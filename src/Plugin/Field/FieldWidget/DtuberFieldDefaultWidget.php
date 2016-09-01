@@ -29,6 +29,8 @@ class DtuberFieldDefaultWidget extends WidgetBase {
 	public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
 		// $dtuber_fields = \Drupal::service('dtuber_field_manager')->getList();
 		// kint($items);
+		$config = \Drupal::config('dtuber.settings');
+
 		$item = $items[$delta];
 		$fid = $item->getValue('fid');
 		$element['fid'] = [
@@ -40,7 +42,7 @@ class DtuberFieldDefaultWidget extends WidgetBase {
 			// '#default_value' => ($item->isEmpty())? NULL : [$item->getValue('fid')['fid']],
 			'#default_value' => NULL,
 			'#upload_validators' => array(
-				'file_validate_extensions' => array('mov mp4 avi mkv 3gp '),
+				'file_validate_extensions' => (!empty($config->get('allowed_exts')))? $config->get('allowed_exts') : array('mov mp4 avi mkv 3gp '),
 				// Pass the maximum file size in bytes
 				// 'file_validate_size' => array(MAX_FILE_SIZE*1024*1024),
 			),
