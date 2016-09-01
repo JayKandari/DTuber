@@ -155,8 +155,9 @@ class DtuberField extends FieldItemBase {
 			$options = array(
 				'path' => str_replace($base_url, '', $path),
 				'title' => $node->title->value,
-				'description' => 'Uploaded by Dtuber Module.. !! :) Yay !!',
-				'tags' => array("india", 'pakistan', 'LOC'),
+				// data sources required for description & tags fields. 
+				'description' => $node->title->value,
+				'tags' => [],
 			);
 
 			// Check if video is already uploaded. 

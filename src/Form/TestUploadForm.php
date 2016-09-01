@@ -61,10 +61,10 @@ class TestUploadForm extends FormBase {
 	 */
 	public function submitForm(array &$form, FormStateInterface $form_state) {
 		$file = $form_state->getValue('video');
-		drupal_set_message('File ID'. $file[0]);
+		// drupal_set_message('File ID'. $file[0]);
 		$file = file_load($file[0]);
 		$path = file_create_url($file->getFileUri());
-		drupal_set_message('file: '. $path);
+		// drupal_set_message('file: '. $path);
 		// exit();
 		global $base_url;
 		$myservice = \Drupal::service('dtuber_youtube_service');
@@ -77,7 +77,7 @@ class TestUploadForm extends FormBase {
 		$html = $myservice->uploadVideo($options);
 
 		// $_SESSION['message'] = $file;
-		drupal_set_message('TestUploadForm form Submitted');
+		drupal_set_message('Form Submitted');
 
 		// return array(
 		// 	'#markup' => 'Form Submitted',

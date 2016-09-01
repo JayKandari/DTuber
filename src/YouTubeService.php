@@ -69,7 +69,7 @@ class YouTubeService {
 		if($this->client->isAccessTokenExpired()){
 			// if Token expired. 
 			// we need to refresh token in this case. 
-			drupal_set_message('Token Expired. Trying to refresh token', 'warning');
+			// drupal_set_message('Token Expired. Trying to refresh token', 'warning');
 			// Check whether we have a refresh token or not. 
 			$refreshToken = $this->getConfig('refresh_token');
 			if($refreshToken != NULL){
@@ -78,14 +78,14 @@ class YouTubeService {
 				$newToken = $this->client->getAccessToken();
 				$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
 				$config->set('access_token', $newToken)->save();
-				drupal_set_message('access_token Refreshed!');
+				// drupal_set_message('access_token Refreshed!');
 			}else{
 				// if refresh token isn't present.
 				$this->client->refreshToken($refreshToken);
 				$newToken = $this->client->getAccessToken();
 				$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
 				$config->set('access_token', $newToken)->save();
-				drupal_set_message('access_token refreshed for first Time. ');
+				// drupal_set_message('access_token refreshed for first Time. ');
 			}
 		}else{
 			// Good TOken. Continue..
