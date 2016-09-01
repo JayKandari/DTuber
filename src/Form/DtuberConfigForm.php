@@ -127,7 +127,9 @@ class DtuberConfigForm extends ConfigFormBase {
 
 		$config->set('redirect_uri', $form_state->getValue('dtuber_redirect_uri'))->save();
 
-		drupal_set_message('Configuration saved !!');
+		$config->set('allowed_exts', $form_state->getValue('dtuber_allowed_exts'))->save();
+
+		// drupal_set_message('Configuration saved !!');
 
 		// $fid = $form_state->getValue('test_file')[0];
 		// $file = \Drupal\Core\Entity\File::load($fid);

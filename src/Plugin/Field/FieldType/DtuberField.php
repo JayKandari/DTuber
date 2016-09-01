@@ -173,7 +173,7 @@ class DtuberField extends FieldItemBase {
 						'yt_videoid' => $video['video_id'],
 						'yt_uploaded' => 1,
 					];
-					drupal_set_message('Video Uploaded to YouTube : '. $video['video_id']);
+					// drupal_set_message('Video Uploaded to YouTube : '. $video['video_id']);
 					// save entity here.
 					$node->save();
 					// $_SESSION['message'] = $node->get($field_id)->getValue()[0];

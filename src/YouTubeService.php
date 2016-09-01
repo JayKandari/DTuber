@@ -217,7 +217,9 @@ class YouTubeService {
 		    $html .= '</ul>';
 
 		    $youtubelink = 'http://youtube.com/watch?v='.$status['id'];
-		    drupal_set_message('Video Upload Successful. <a href="'.$youtubelink.'">Watch Video</a>');
+		    $message = 'Upload Successful. Video might take a while to process. <a href="'.$youtubelink.'" target="_Blank">Watch in YouTube</a>';
+		    $rendered_message = \Drupal\Core\Render\Markup::create($message);
+		    drupal_set_message($rendered_message);
 
 		    # returns an array of important values;
 			return [
