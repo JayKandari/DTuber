@@ -16,7 +16,7 @@ class YouTubeService {
 	protected $client;
 
 	/*
-	 * returns if all the 3 credentials available. 
+	 * returns if all the 3 credentials available.
 	 */
 	public function getCredentials(){
 		$client_id = $this->getConfig('client_id');
@@ -24,7 +24,7 @@ class YouTubeService {
 		$redirect_uri = $this->getConfig('redirect_uri');
 
 		if(isset($client_id) && isset($client_secret) && isset($redirect_uri)) {
-			// credentials present. 
+			// credentials present.
 			$this->client_id = $client_id;
 			$this->client_secret = $client_secret;
 			$this->redirect_uri = $redirect_uri;
@@ -58,22 +58,22 @@ class YouTubeService {
 
 		} catch (\Exception $e) {
 			drupal_set_message('\Drupal\dtuber\YouTube : ' . $e->getMessage(), 'error');
-		}		
+		}
 	}
 
 	protected function manage_tokens() {
-		# Calculate token expiry 
+		# Calculate token expiry
 		$token = $this->getConfig('access_token');
 		$this->client->setAccessToken($token);
 		# and perform required action.
 		if($this->client->isAccessTokenExpired()){
-			// if Token expired. 
-			// we need to refresh token in this case. 
+			// if Token expired.
+			// we need to refresh token in this case.
 			// drupal_set_message('Token Expired. Trying to refresh token', 'warning');
-			// Check whether we have a refresh token or not. 
+			// Check whether we have a refresh token or not.
 			$refreshToken = $this->getConfig('refresh_token');
 			if($refreshToken != NULL){
-				// if refresh token present. 
+				// if refresh token present.
 				$this->client->refreshToken($refreshToken);
 				$newToken = $this->client->getAccessToken();
 				$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
@@ -223,16 +223,16 @@ class YouTubeService {
 
 		    # returns an array of important values;
 			return [
-				'status' => 'OK', // Status of OK means video successfully uploaded. 
+				'status' => 'OK', // Status of OK means video successfully uploaded.
 				'markup' => $html,
 				'video_id' => $status['id'],
 			];
 		}catch(\Exception $e) {
 			drupal_set_message('\Drupal\dtuber\YouTube : ' . $e->getMessage(), 'error');
 		}
-		// by default it sends false value. 
+		// by default it sends false value.
 		return [
-			'status' => 'ERROR', // Status of ERROR means, video not uploaded. 
+			'status' => 'ERROR', // Status of ERROR means, video not uploaded.
 		];
 	}
 
@@ -241,7 +241,7 @@ class YouTubeService {
 	 */
 	public function youTubeAccount() {
 		try{
-			
+
 			// Will set tokens & refresh token when necessary.
 			$this->manage_tokens();
 
@@ -251,8 +251,15 @@ class YouTubeService {
 		      'mine' => 'true',
 		    ));
 
-			$channel = $channelsResponse->getItems()[0]->getBrandingSettings()->getChannel();
 			// kint($channelsResponse->getItems()[0]);
+			$branding = $channelsResponse->getItems()[0]->getBrandingSettings();
+			$channel = (!empty($branding))? $branding : NULL;
+			// kint($channelsResponse->getItems()[0]);
+
+			if($channel == NULL) {
+				return FALSE;
+			}
+
 			$channelTitle= $channel->title;
 			$channelDesc = $channel->description;
 

@@ -38,7 +38,7 @@ class DtuberField extends FieldItemBase {
 					'not null' => FALSE,
 				),
 				# reference: http://drupal.stackexchange.com/questions/87962/which-type-to-use-for-checkbox-fields-in-hook-field-schema
-				# file_uploaded_to_youtube : yes/no 
+				# file_uploaded_to_youtube : yes/no
 				'yt_uploaded' => array(
 					'type' => 'int',
 					'size' => 'tiny',
@@ -46,7 +46,7 @@ class DtuberField extends FieldItemBase {
 					'default' => 0,
 				),
 
-				# youtube_videoid : youtube VIDEO ID 
+				# youtube_videoid : youtube VIDEO ID
 				'yt_videoid' => array(
 					'type' => 'varchar',
 					'length' => 255,
@@ -115,11 +115,11 @@ class DtuberField extends FieldItemBase {
 		// $_SESSION['message'] = $this;
 		// drupal_set_message("DtuberField->postSave() Fired. ");
 		// make file permananet.
-		/* Fetch the array of the file stored temporarily in database */ 
+		/* Fetch the array of the file stored temporarily in database */
 
 		// $file = $this->get('fid')->getValue();
 
-		// /* Load the object of the file by it's fid */ 
+		// /* Load the object of the file by it's fid */
 		// $file = File::load( $file[0] );
 		// // $file = file_load($file[0]);
 
@@ -129,7 +129,7 @@ class DtuberField extends FieldItemBase {
 		// /* Save the file in database */
 		// $file->save();
 
-		// send file to Youtube. 
+		// send file to Youtube.
 		// $file = $this->getValue('fid');
 		$entity = $this->getEntity();
 		$node = \Drupal\node\Entity\Node::load($entity->id());
@@ -142,11 +142,11 @@ class DtuberField extends FieldItemBase {
 		$file = file_load($file);
 		// if($this->isEmpty()) {
 		if($field_val && isset($file) ) {
-			// If file is there... 
+			// If file is there...
 			// print_r($field_val);
-			
+
 			// // // drupal_set_message('File ID'. $file[0]);
-			
+
 			$path = file_create_url($file->getFileUri());
 			// // // drupal_set_message('file: '. $path);
 			// // // exit();
@@ -155,22 +155,22 @@ class DtuberField extends FieldItemBase {
 			$options = array(
 				'path' => str_replace($base_url, '', $path),
 				'title' => $node->title->value,
-				// data sources required for description & tags fields. 
+				// data sources required for description & tags fields.
 				'description' => $node->title->value,
 				'tags' => [],
 			);
 
-			// Check if video is already uploaded. 
+			// Check if video is already uploaded.
 			if($field_val['yt_uploaded'] != 1){
-				// send a video upload request to 
+				// send a video upload request to
 				$video = $dtuberYouTubeService->uploadVideo($options);
 				// $video = ['status' => 'OK'];
 				if($video['status'] === 'OK') {
 					// if upload successful.
 					// update field
 					$node->{$field_id} = [
-						'fid' => $field_val['fid'], 
-						// if youtube Id Isnt set.
+						'fid' => $field_val['fid'],
+						// if youtube Id Isn't set.
 						'yt_videoid' => $video['video_id'],
 						'yt_uploaded' => 1,
 					];
@@ -179,7 +179,7 @@ class DtuberField extends FieldItemBase {
 					$node->save();
 					// $_SESSION['message'] = $node->get($field_id)->getValue()[0];
 				}else{
-					$node->{$field_id} += [
+					$node->{$field_id} = [
 						'yt_videoid' => NULL,
 						'yt_uploaded' => 0,
 					];
@@ -192,7 +192,7 @@ class DtuberField extends FieldItemBase {
 		}else{
 			// When fid is empty... remove any extra video ids and uploaded flag
 			$node->{$field_id} = [
-				'fid' => NULL, 
+				'fid' => NULL,
 				'yt_videoid' => NULL,
 				'yt_uploaded' => 0,
 			];

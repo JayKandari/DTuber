@@ -1,9 +1,5 @@
 <?php
 
-function dtuber_uninstall(){
-	drupal_set_message('DTuber uninstalled Successfully. Have a good day!');
-}
-
 function dtuber_theme(){
 	return array(
 		'dtuber_field_formatter' => array(
@@ -16,15 +12,3 @@ function dtuber_theme(){
 		),
 	);
 }
-/**
- * Implements hook_help().
- */
-// function dtuber_help($route_name, RouteMatchInterface $route_match) {
-// 	switch ($route_name) {
-// 		case 'help.page.dtuber':
-// 			$output = '';
-// 			$output .= '&lt;h3&gt;'. t('DTuber') . '&lt;/h3&gt;';
-// 			$output .= '&lt;p&gt;'. t('DTuber module creates a Dtuber Field, which uploads video to YouTube & provide a YouTube play to play same video. ') . '&lt;/p&gt;';
-// 			return $output;
-// 	}
-// }

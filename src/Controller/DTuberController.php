@@ -25,15 +25,16 @@ class DTuberController extends ControllerBase {
 		);
 	}
 
-	public function revoke(){
+	public function revoke($showmsg = true){
 		$config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
 		$config->set('access_token', null)->save();
 
 		$myservice = \Drupal::service('dtuber_youtube_service');
 		$myservice->revokeAuth();
 
-		drupal_set_message('Authentication Revoked. Need re authorization from Google.');
-
+		if($showmsg) {
+			drupal_set_message('Authentication Revoked. Need re authorization from Google.');
+		}
 		return new RedirectResponse(\Drupal::url('dtuber.configform'));
   		// $response->send();
 	}
@@ -45,9 +46,15 @@ class DTuberController extends ControllerBase {
 		if($code){
 			$myservice = \Drupal::service('dtuber_youtube_service');
 			$access = $myservice->authorizeClient($code);
-			
+
+			if($myservice->youTubeAccount() === FALSE) {
+				drupal_get_messages();
+				drupal_set_message('YouTube account not configured properly.', 'error');
+				$this->revoke(false);
+			}
+
 		}else if($error == 'access_denied'){
-			drupal_set_message('Access Rejected. Kindly Allow Application to use your account.', 'error');
+			drupal_set_message('Access Rejected! grant application to use your account.', 'error');
 		}
 		// redirect to configform.
 		return new RedirectResponse(\Drupal::url('dtuber.configform'));
