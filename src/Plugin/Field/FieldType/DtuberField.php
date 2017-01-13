@@ -154,7 +154,7 @@ class DtuberField extends FieldItemBase {
             'yt_uploaded' => 0,
           ];
           $node->save();
-          drupal_set_message('Unable to Upload video to YouTube.' . $video['status']);
+          drupal_set_message($this->t('Unable to Upload video to YouTube.'));
         }
       }
       else {

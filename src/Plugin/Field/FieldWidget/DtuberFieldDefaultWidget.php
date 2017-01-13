@@ -28,7 +28,7 @@ class DtuberFieldDefaultWidget extends WidgetBase {
     $config = \Drupal::config('dtuber.settings');
 
     $item = $items[$delta];
-    $fid = $item->getValue('fid');
+
     $element['fid'] = [
       '#type' => 'managed_file',
       '#title' => $this->t('Upload Video'),

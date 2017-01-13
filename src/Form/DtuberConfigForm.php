@@ -2,13 +2,30 @@
 
 namespace Drupal\dtuber\Form;
 
-use \Drupal\Core\Form\ConfigFormBase;
-use \Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Config form for Dtuber.
  */
 class DtuberConfigForm extends ConfigFormBase {
+
+  protected $dtuberYtService;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct($dtuberYoutube) {
+    $this->dtuberYtService = $dtuberYoutube;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('dtuber_youtube_service'));
+  }
 
   /**
    * {@inheritdoc}
@@ -43,16 +60,14 @@ class DtuberConfigForm extends ConfigFormBase {
         $revoke,
       );
 
-      $myservice = \Drupal::service('dtuber_youtube_service');
       // Channel Details.
       $form['channel_details'] = array(
         '#type' => 'markup',
-        '#markup' => $myservice->youTubeAccount(),
+        '#markup' => $this->dtuberYtService->youTubeAccount(),
       );
 
     }
     else {
-      $myservice = \Drupal::service('dtuber_youtube_service');
       $hasClientIds = $config->get('client_id');
       $hasClientSecret = $config->get('client_secret');
       $hasRedirectUri = $config->get('redirect_uri');
@@ -65,7 +80,7 @@ class DtuberConfigForm extends ConfigFormBase {
       }
 
       if (!isEmpty($hasClientIds) && !isEmpty($hasClientSecret) && !isEmpty($hasRedirectUri)) {
-        $auth_url = $myservice->getAuthUrl();
+        $auth_url = $this->dtuberYtService->getAuthUrl();
         $form['authorize'] = array(
           '#type' => 'markup',
           '#markup' => '<strong>UnAuthorized : Click <a href="' . $auth_url . '">Here</a> to Authorize.</strong>',
@@ -124,22 +139,13 @@ class DtuberConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
-
-    $config->set('client_id', $form_state->getValue('dtuber_client_id'))->save();
-
-    $config->set('client_secret', $form_state->getValue('dtuber_client_secret'))->save();
-
-    $config->set('redirect_uri', $form_state->getValue('dtuber_redirect_uri'))->save();
-
-    $config->set('allowed_exts', $form_state->getValue('dtuber_allowed_exts'))->save();
-
-    // drupal_set_message('Configuration saved !!');.
-    // $fid = $form_state->getValue('test_file')[0];
-    // $file = \Drupal\Core\Entity\File::load($fid);
-    // $_SESSION['file'] = file_load($fid);
-    // kint($file);
-    parent::submitForm($form, $form_state);
+    $values = $form_state->getValues();
+    $this->config('dtuber.settings')
+      ->set('client_id', $values['dtuber_client_id'])
+      ->set('client_secret', $values['dtuber_client_secret'])
+      ->set('redirect_uri', $values['dtuber_redirect_uri'])
+      ->set('allowed_exts', $values['dtuber_allowed_exts'])
+      ->save();
   }
 
 }

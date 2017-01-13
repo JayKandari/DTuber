@@ -23,7 +23,6 @@ class DtuberFieldDefaultFormatter extends FormatterBase {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $html = '';
     $elements = [];
     // kint($items);
     foreach ($items as $delta => $item) {

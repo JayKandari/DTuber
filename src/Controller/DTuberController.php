@@ -3,7 +3,7 @@
 namespace Drupal\dtuber\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-// Use Symfony\Component\DependencyInjection\ContainerInterface;.
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Drupal\Core\Url;
 
@@ -12,13 +12,32 @@ use Drupal\Core\Url;
  */
 class DTuberController extends ControllerBase {
 
+  protected $dtuberYtService;
+  protected $configFactory;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct($dtuberYoutube, $configFactory) {
+    $this->dtuberYtService = $dtuberYoutube;
+    $this->configFactory = $configFactory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static (
+      $container->get('dtuber_youtube_service'),
+      $container->get('config.factory')
+    );
+  }
+
   /**
    * {@inheritdoc}
    */
   public function content() {
-    $myservice = \Drupal::service('dtuber_youtube_service');
-
-    $html = $myservice->uploadVideo();
+    $html = $this->dtuberYtService->uploadVideo();
 
     return array(
       '#markup' => $html,
@@ -31,14 +50,13 @@ class DTuberController extends ControllerBase {
    * Revokes Google Authorization.
    */
   public function revoke($showmsg = TRUE) {
-    $config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
+    $config = $this->configFactory->getEditable('dtuber.settings');
     $config->set('access_token', NULL)->save();
 
-    $myservice = \Drupal::service('dtuber_youtube_service');
-    $myservice->revokeAuth();
+    $this->dtuberYtService->revokeAuth();
 
     if ($showmsg) {
-      drupal_set_message('Authentication Revoked. Need re authorization from Google.');
+      drupal_set_message($this->t('Authentication Revoked. Need re authorization from Google.'));
     }
     return new RedirectResponse(\Drupal::url('dtuber.configform'));
     // $response->send();
@@ -51,19 +69,19 @@ class DTuberController extends ControllerBase {
     // Handles dtuber/authorize authorization from google.
     $code = \Drupal::request()->query->get('code');
     $error = \Drupal::request()->query->get('error');
-    if ($code) {
-      $myservice = \Drupal::service('dtuber_youtube_service');
-      $access = $myservice->authorizeClient($code);
+    // Authorize current request.
+    $this->dtuberYtService->authorizeClient($code);
 
-      if ($myservice->youTubeAccount() === FALSE) {
+    if ($code) {
+      if ($this->dtuberYtService->youTubeAccount() === FALSE) {
         drupal_get_messages();
-        drupal_set_message('YouTube account not configured properly.', 'error');
+        drupal_set_message($this->t('YouTube account not configured properly.'), 'error');
         $this->revoke(FALSE);
       }
 
     }
     elseif ($error == 'access_denied') {
-      drupal_set_message('Access Rejected! grant application to use your account.', 'error');
+      drupal_set_message($this->t('Access Rejected! grant application to use your account.'), 'error');
     }
     // Redirect to configform.
     return new RedirectResponse(\Drupal::url('dtuber.configform'));

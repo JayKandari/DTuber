@@ -1,8 +1,8 @@
 <?php
 
-use Drupal\Core\Render\Markup;
-
 namespace Drupal\dtuber;
+
+use Drupal\Core\Render\Markup;
 
 /**
  * YouTube Service.
@@ -33,7 +33,7 @@ class YouTubeService {
       );
     }
     else {
-      drupal_set_message('DTuber\YouTubeService: Credentials not present.', 'warning');
+      drupal_set_message(t('DTuber\YouTubeService: Credentials not present.'), 'warning');
       return FALSE;
     }
   }
@@ -62,7 +62,7 @@ class YouTubeService {
 
     }
     catch (\Exception $e) {
-      drupal_set_message('\Drupal\dtuber\YouTube : ' . $e->getMessage(), 'error');
+      drupal_set_message(t('Dtuber Error : @e', ['@e' => $e->getMessage()]), 'error');
     }
   }
 
@@ -137,7 +137,7 @@ class YouTubeService {
     $config->set('access_token', $this->client->getAccessToken())->save();
     $config->set('refresh_token', $this->client->getRefreshToken())->save();
 
-    drupal_set_message('New Token Authorized!! ');
+    drupal_set_message(t('New Token Authorized!!'));
 
   }
 
@@ -244,7 +244,7 @@ class YouTubeService {
       ];
     }
     catch (\Exception $e) {
-      drupal_set_message('\Drupal\dtuber\YouTube : ' . $e->getMessage(), 'error');
+      drupal_set_message(t('Dtuber Error : @e', ['@e' => $e->getMessage()]), 'error');
     }
     // By default it sends false value.
     return [
@@ -291,7 +291,7 @@ class YouTubeService {
 
     }
     catch (\Exception $e) {
-      drupal_set_message('\Drupal\dtuber\YouTube : ' . $e->getMessage(), 'error');
+      drupal_set_message(t('DTuber Error : @e', ['@e' => $e->getMessage()]), 'error');
     }
   }
 

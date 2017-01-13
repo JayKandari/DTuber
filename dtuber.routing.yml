@@ -1,5 +1,5 @@
 dtuber.configform:
-  path: '/admin/config/media/dtuber_config'
+  path: '/admin/config/media/dtuber'
   defaults:
     _form: '\Drupal\dtuber\Form\DtuberConfigForm'
     _title: 'Configure DTuber'
