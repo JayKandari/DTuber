@@ -2,13 +2,30 @@
 
 namespace Drupal\dtuber\Form;
 
-use \Drupal\Core\Form\FormBase;
-use \Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Test upload form for Dtuber.
  */
 class TestUploadForm extends FormBase {
+
+  protected $dtuberYtService;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct($dtuberYoutube) {
+    $this->dtuberYtService = $dtuberYoutube;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('dtuber_youtube_service'));
+  }
 
   /**
    * {@inheritdoc}
@@ -67,14 +84,14 @@ class TestUploadForm extends FormBase {
     // drupal_set_message('file: '. $path);
     // exit();
     global $base_url;
-    $myservice = \Drupal::service('dtuber_youtube_service');
+
     $options = array(
       'path' => str_replace($base_url, '', $path),
       'title' => $form_state->getValue('title'),
       'description' => $form_state->getValue('description'),
       'tags' => explode(',', $form_state->getValue('tags')),
     );
-    $response = $myservice->uploadVideo($options);
+    $response = $this->dtuberYtService->uploadVideo($options);
     if ($response['status'] != 'OK') {
       drupal_set_message($this->t('Unable to upload Video.'), 'error');
     }

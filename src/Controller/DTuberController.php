@@ -4,8 +4,6 @@ namespace Drupal\dtuber\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Drupal\Core\Url;
 
 /**
  * Dtuber controller for Authorization & Revoking user access.
@@ -14,13 +12,15 @@ class DTuberController extends ControllerBase {
 
   protected $dtuberYtService;
   protected $configFactory;
+  protected $request;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct($dtuberYoutube, $configFactory) {
+  public function __construct($dtuberYoutube, $configFactory, $request) {
     $this->dtuberYtService = $dtuberYoutube;
     $this->configFactory = $configFactory;
+    $this->request = $request;
   }
 
   /**
@@ -29,7 +29,8 @@ class DTuberController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static (
       $container->get('dtuber_youtube_service'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('request_stack')->getCurrentRequest()
     );
   }
 
@@ -58,8 +59,8 @@ class DTuberController extends ControllerBase {
     if ($showmsg) {
       drupal_set_message($this->t('Authentication Revoked. Need re authorization from Google.'));
     }
-    return new RedirectResponse(\Drupal::url('dtuber.configform'));
-    // $response->send();
+
+    return $this->redirect('dtuber.configform');
   }
 
   /**
@@ -67,8 +68,8 @@ class DTuberController extends ControllerBase {
    */
   public function authorize() {
     // Handles dtuber/authorize authorization from google.
-    $code = \Drupal::request()->query->get('code');
-    $error = \Drupal::request()->query->get('error');
+    $code = $this->request->query->get('code');
+    $error = $this->request->query->get('error');
     // Authorize current request.
     $this->dtuberYtService->authorizeClient($code);
 
@@ -84,7 +85,7 @@ class DTuberController extends ControllerBase {
       drupal_set_message($this->t('Access Rejected! grant application to use your account.'), 'error');
     }
     // Redirect to configform.
-    return new RedirectResponse(\Drupal::url('dtuber.configform'));
+    return $this->redirect('dtuber.configform');
 
   }
 
