@@ -23,40 +23,42 @@ use Symfony\Component\EventDispatcher\Event;
  *   }
  * )
 */
-class DtuberFieldDefaultFormatter extends FormatterBase {
-	/**
-	 * {@inheritdocs}
-	 */
-	public function viewElements(FieldItemListInterface $items, $langcode) {
-		# -----------------------------------------------
-		# Need to allow X-Frame-Options, D8 by default disallows any other origin to embed in <iframes>
-		# https://www.drupal.org/node/2514152
-		// $dispatcher = \Drupal::service('event_dispatcher');
-		// $e = new Event($items);
-		// $event = $dispatcher->dispatch('remove_x_frame_options_subscriber', $e);
-		# -----------------------------------------------
-		$html = '';
-		$elements = [];
-		// kint($items);
-		foreach ($items as $delta => $item) {
-			if($item) {
+class DtuberFieldDefaultFormatter extends FormatterBase
+{
+    /**
+     * {@inheritdocs}
+     */
+    public function viewElements(FieldItemListInterface $items, $langcode) 
+    {
+        // -----------------------------------------------
+        // Need to allow X-Frame-Options, D8 by default disallows any other origin to embed in <iframes>
+        // https://www.drupal.org/node/2514152
+        // $dispatcher = \Drupal::service('event_dispatcher');
+        // $e = new Event($items);
+        // $event = $dispatcher->dispatch('remove_x_frame_options_subscriber', $e);
+        // -----------------------------------------------
+        $html = '';
+        $elements = [];
+        // kint($items);
+        foreach ($items as $delta => $item) {
+            if($item) {
 
-				$options = array(
-					'src' =>  'https://www.youtube.com/v/' . $item->yt_videoid . '?version=3&autoplay=1',
-					'value' => $item->fid,
-					'vid' => $item->yt_videoid,
-				);
-				$elements[$delta] = array(
-					'#theme' => 'dtuber_field_formatter',
-					'#options' => $options,
-				);
-				// kint($item);
-				// $html .= '<pre>FileID: '.$item->fid.'</pre>';
-			}
-		}
-		return $elements;
-	// 	return [
-	// 		'#markup' => $html,
-	// 	];
-	}
+                $options = array(
+                 'src' =>  'https://www.youtube.com/v/' . $item->yt_videoid . '?version=3&autoplay=1',
+                 'value' => $item->fid,
+                 'vid' => $item->yt_videoid,
+                );
+                $elements[$delta] = array(
+                 '#theme' => 'dtuber_field_formatter',
+                 '#options' => $options,
+                );
+                // kint($item);
+                // $html .= '<pre>FileID: '.$item->fid.'</pre>';
+            }
+        }
+        return $elements;
+        // 	return [
+        // 		'#markup' => $html,
+        // 	];
+    }
 }
