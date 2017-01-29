@@ -58,7 +58,7 @@ class DtuberConfigForm extends ConfigFormBase {
     $form['authentication'] = array(
       '#type' => 'details',
       '#title' => 'Google Authentication',
-      '#description' => 'DTuber requires Google Account authentication to upload videos to YouTube.',
+      '#description' => $this->t('DTuber requires Google Account authentication to upload videos to YouTube.'),
       '#open' => TRUE,
     );
     $form['credentials'] = array(
