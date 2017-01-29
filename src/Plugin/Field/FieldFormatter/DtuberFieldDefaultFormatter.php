@@ -24,10 +24,8 @@ class DtuberFieldDefaultFormatter extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = [];
-    // kint($items);
     foreach ($items as $delta => $item) {
       if ($item) {
-
         $options = array(
           'src' => 'https://www.youtube.com/v/' . $item->yt_videoid . '?version=3&autoplay=1',
           'value' => $item->fid,
@@ -37,14 +35,9 @@ class DtuberFieldDefaultFormatter extends FormatterBase {
           '#theme' => 'dtuber_field_formatter',
           '#options' => $options,
         );
-        // kint($item);
-        // $html .= '<pre>FileID: '.$item->fid.'</pre>';.
       }
     }
     return $elements;
-    // Return [
-    // '#markup' => $html,
-    // ];.
   }
 
 }

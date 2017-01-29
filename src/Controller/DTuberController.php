@@ -42,13 +42,14 @@ class DTuberController extends ControllerBase {
 
     return array(
       '#markup' => $html,
-     // '#theme' => 'dtuber_youtube_service_example',
-     // '#options' => $options,.
     );
   }
 
   /**
    * Revokes Google Authorization.
+   *
+   * @param bool $showmsg
+   *        (optional) Controls display of authentication revoked message.
    */
   public function revoke($showmsg = TRUE) {
     $config = $this->configFactory->getEditable('dtuber.settings');

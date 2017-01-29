@@ -42,29 +42,57 @@ class DtuberConfigForm extends ConfigFormBase {
   }
 
   /**
+   * Check is item empty.
+   */
+  public function isEmpty($item) {
+    return ($item === NULL || $item === '');
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     global $base_url;
     // Get config.
     $config = $this->config('dtuber.settings');
+    $form['authentication'] = array(
+      '#type' => 'details',
+      '#title' => 'Google Authentication',
+      '#description' => 'DTuber requires Google Account authentication to upload videos to YouTube.',
+      '#open' => TRUE,
+    );
+    $form['credentials'] = array(
+      '#type' => 'details',
+      '#title' => 'Credentials',
+      '#open' => TRUE,
+    );
     $hasAccessToken = $config->get('access_token');
     if ($hasAccessToken) {
-      $revoke = '<p><a href="' . $base_url . '/dtuber/revoke">Revoke Current Authentication</a></p>';
-      $form['dtuber_access_token'] = array(
+      $authorized = '<p>Status: <strong>Authorized</strong>.</p><p><a class="button" href="' . $base_url . '/dtuber/revoke">Revoke Current Authentication</a></a>';
+      $form['authentication']['dtuber_access_token'] = array(
         '#type' => 'markup',
-      // '#title' => 'Access Token',.
-        '#markup' => '
-				<p><strong>Access Token : </strong>' . json_encode($config->get('access_token')) . '</p>' .
-        '<p><strong>Refresh Token : </strong>' . json_encode($config->get('refresh_token')) . '</p>' .
-        $revoke,
+        '#markup' => $authorized,
       );
 
       // Channel Details.
-      $form['channel_details'] = array(
-        '#type' => 'markup',
-        '#markup' => $this->dtuberYtService->youTubeAccount(),
+      $form['channel'] = array(
+        '#type' => 'details',
+        '#title' => 'YouTube Details',
+        '#open' => TRUE,
       );
+
+      $channelSettings = $this->dtuberYtService->youTubeAccount();
+
+      $details = '<p><strong>Channel Name:</strong> ' . $channelSettings->title . '.</p>';
+      $details .= '<p><strong>Channel Description:</strong> ' . $channelSettings->description . '.</p>';
+      $details .= '<p><strong>Channel Keywords:</strong> ' . $channelSettings->keywords . '.</p>';
+      $form['channel']['details'] = array(
+        '#type' => 'markup',
+        '#markup' => $details,
+      );
+
+      $form['authentication']['#open'] = FALSE;
+      $form['credentials']['#open'] = FALSE;
 
     }
     else {
@@ -72,30 +100,24 @@ class DtuberConfigForm extends ConfigFormBase {
       $hasClientSecret = $config->get('client_secret');
       $hasRedirectUri = $config->get('redirect_uri');
 
-      /**
-       * Check is item empty.
-       */
-      function isEmpty($item) {
-        return ($item === NULL || $item === '');
-      }
-
-      if (!isEmpty($hasClientIds) && !isEmpty($hasClientSecret) && !isEmpty($hasRedirectUri)) {
+      if (!$this->isEmpty($hasClientIds) && !$this->isEmpty($hasClientSecret) && !$this->isEmpty($hasRedirectUri)) {
         $auth_url = $this->dtuberYtService->getAuthUrl();
-        $form['authorize'] = array(
+        $unauthorized = '<p>Status: <strong>Unauthorized</strong>.</p><p><a class="button" href="' . $auth_url . '">Authorize</a></p>';
+        $form['authentication']['authorize'] = array(
           '#type' => 'markup',
-          '#markup' => '<strong>UnAuthorized : Click <a href="' . $auth_url . '">Here</a> to Authorize.</strong>',
+          '#markup' => $unauthorized,
         );
       }
       else {
-        $form['authorize'] = array(
+        $status = '<p>Status: <strong>Credentials required</strong>.</p><p>Provide values for Client ID, Secret and Redirect Uri</p>';
+        $form['authentication']['authorize'] = array(
           '#type' => 'markup',
-          '#markup' => '<strong>Provide Client Details : </strong>fill in Client id, secret & redirect uri to get auth_url',
+          '#markup' => $status,
         );
       }
-
     }
 
-    $form['dtuber_client_id'] = array(
+    $form['credentials']['dtuber_client_id'] = array(
       '#type' => 'textfield',
       '#title' => 'Client ID',
       '#default_value' => $config->get('client_id'),
@@ -103,7 +125,7 @@ class DtuberConfigForm extends ConfigFormBase {
       '#disabled' => $hasAccessToken,
     );
 
-    $form['dtuber_client_secret'] = array(
+    $form['credentials']['dtuber_client_secret'] = array(
       '#type' => 'textfield',
       '#title' => 'Client Secret',
       '#default_value' => $config->get('client_secret'),
@@ -112,7 +134,7 @@ class DtuberConfigForm extends ConfigFormBase {
     );
 
     $redirect_uri = $base_url . '/dtuber/authorize';
-    $form['dtuber_redirect_uri'] = array(
+    $form['credentials']['dtuber_redirect_uri'] = array(
       '#type' => 'textfield',
       '#title' => 'Redirect uri',
       '#default_value' => ($config->get('redirect_uri')) ? $config->get('redirect_uri') : $redirect_uri,
@@ -125,13 +147,8 @@ class DtuberConfigForm extends ConfigFormBase {
       '#title' => 'Allowed Extensions',
       '#default_value' => $config->get('allowed_exts'),
       '#description' => $this->t('Provide allowed extensions separated by a space. Eg: "mov mp4 avi mkv 3gp".'),
-     // '#disabled' => $hasAccessToken,.
     );
-    // if(isset($_SESSION['file'])){
-    // $file = $_SESSION['file'];
-    // kint($file);
-    // drupal_set_message($file->getFileUri());
-    // }
+
     return parent::buildForm($form, $form_state);
   }
 

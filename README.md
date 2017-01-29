@@ -21,7 +21,7 @@ Install google-api-php-client by following command:
  - Set Client ID, Client Secret, Redirect uri (as give in config page).
 5. Navigate to Dtuber Config page : **/admin/config/media/dtuber**
 6. Match Redirect uri as given in description of DTuber Config page.
-7. Then Click link which says 'Click here to Authorize'.
+7. Then Click 'Authorize' button.
  - That will ask for your YouTube channel's permission.
 8. You are ready to go. Goto test form (**/dtuber/testform**) to test DTuber.
  - Check your YouTube Channel for latest updated Video.

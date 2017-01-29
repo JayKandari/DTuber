@@ -78,11 +78,8 @@ class TestUploadForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $file = $form_state->getValue('video');
-    // drupal_set_message('File ID'. $file[0]);.
     $file = file_load($file[0]);
     $path = file_create_url($file->getFileUri());
-    // drupal_set_message('file: '. $path);
-    // exit();
     global $base_url;
 
     $options = array(
@@ -95,10 +92,6 @@ class TestUploadForm extends FormBase {
     if ($response['status'] != 'OK') {
       drupal_set_message($this->t('Unable to upload Video.'), 'error');
     }
-
-    // Return array(
-    // '#markup' => 'Form Submitted',
-    // );.
   }
 
 }

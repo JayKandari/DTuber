@@ -47,11 +47,10 @@ class YouTubeService {
         // Credentials present.
         return FALSE;
       }
-      // Set client;.
+      // Set client.
       $this->client = new \Google_Client();
 
-      // Initialize client
-      // $this->initializeClient();
+      // Initialize client.
       $this->client->setClientId($this->client_id);
       $this->client->setClientSecret($this->client_secret);
       $this->client->setScopes('https://www.googleapis.com/auth/youtube');
@@ -85,7 +84,6 @@ class YouTubeService {
         $newToken = $this->client->getAccessToken();
         $config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
         $config->set('access_token', $newToken)->save();
-        // drupal_set_message('access_token Refreshed!');.
       }
       else {
         // If refresh token isn't present.
@@ -93,12 +91,10 @@ class YouTubeService {
         $newToken = $this->client->getAccessToken();
         $config = \Drupal::service('config.factory')->getEditable('dtuber.settings');
         $config->set('access_token', $newToken)->save();
-        // drupal_set_message('access_token refreshed for first Time. ');.
       }
     }
     else {
-      // Good TOken. Continue..
-      // drupal_set_message('Good Token');.
+      // Good TOken. Continue.
     }
   }
 
@@ -270,25 +266,13 @@ class YouTubeService {
         )
       );
 
-      // kint($channelsResponse->getItems()[0]);
       $branding = $channelsResponse->getItems()[0]->getBrandingSettings();
-      $channel = (!empty($branding)) ? $branding : NULL;
-      // kint($channelsResponse->getItems()[0]);
+      $channel = (!empty($branding)) ? $branding->getChannel() : NULL;
       if ($channel == NULL) {
         return FALSE;
       }
 
-      $channelTitle = $channel->title;
-      $channelDesc = $channel->description;
-
-      $htmlBody = "<h3>Channel Details:</h3>";
-      $htmlBody .= sprintf('<p><strong>YouTube Channel Name:</strong> %s </p>', $channelTitle);
-      $htmlBody .= sprintf('<p><strong>Description:</strong> %s </p>', $channelDesc);
-      global $base_url;
-      $htmlBody .= '<p><a href="' . $base_url . '/dtuber/testform">Test Upload Form</a></p>';
-
-      return $htmlBody;
-
+      return $channel;
     }
     catch (\Exception $e) {
       drupal_set_message(t('DTuber Error : @e', ['@e' => $e->getMessage()]), 'error');
