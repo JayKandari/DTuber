@@ -25,9 +25,9 @@ dtuber.authorize:
   requirements:
     _permission: 'administer site configuration'
 dtuber.testform:
-  path: '/dtuber/testform'
+  path: '/admin/config/media/dtuber/test'
   defaults:
     _form: '\Drupal\dtuber\Form\TestUploadForm'
-    _title: 'DTuber Test Form'
+    _title: 'Test Dtuber'
   requirements:
-    _permission: 'access content'
+    _permission: 'administer site configuration'
